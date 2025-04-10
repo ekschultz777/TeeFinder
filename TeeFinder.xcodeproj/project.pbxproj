@@ -16,6 +16,10 @@
 		D5A541162DA844B3004514F7 /* TeeFinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A541152DA844B3004514F7 /* TeeFinderTests.swift */; };
 		D5A541202DA844B3004514F7 /* TeeFinderUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A5411F2DA844B3004514F7 /* TeeFinderUITests.swift */; };
 		D5A541222DA844B3004514F7 /* TeeFinderUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A541212DA844B3004514F7 /* TeeFinderUITestsLaunchTests.swift */; };
+		D5A541342DA85860004514F7 /* Course+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A541322DA85860004514F7 /* Course+CoreDataClass.swift */; };
+		D5A541352DA85860004514F7 /* Course+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A541332DA85860004514F7 /* Course+CoreDataProperties.swift */; };
+		D5A541372DA864A1004514F7 /* GolfCourseAPIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A541362DA864A1004514F7 /* GolfCourseAPIModel.swift */; };
+		D5A541392DA864DD004514F7 /* CourseSearchSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A541382DA864DD004514F7 /* CourseSearchSession.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +52,10 @@
 		D5A5411B2DA844B3004514F7 /* TeeFinderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TeeFinderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5A5411F2DA844B3004514F7 /* TeeFinderUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeeFinderUITests.swift; sourceTree = "<group>"; };
 		D5A541212DA844B3004514F7 /* TeeFinderUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeeFinderUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		D5A541322DA85860004514F7 /* Course+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Course+CoreDataClass.swift"; sourceTree = "<group>"; };
+		D5A541332DA85860004514F7 /* Course+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Course+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		D5A541362DA864A1004514F7 /* GolfCourseAPIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GolfCourseAPIModel.swift; sourceTree = "<group>"; };
+		D5A541382DA864DD004514F7 /* CourseSearchSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseSearchSession.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +86,10 @@
 		D5A540F32DA844AF004514F7 = {
 			isa = PBXGroup;
 			children = (
+				D5A541382DA864DD004514F7 /* CourseSearchSession.swift */,
+				D5A541362DA864A1004514F7 /* GolfCourseAPIModel.swift */,
+				D5A541322DA85860004514F7 /* Course+CoreDataClass.swift */,
+				D5A541332DA85860004514F7 /* Course+CoreDataProperties.swift */,
 				D5A540FE2DA844B0004514F7 /* TeeFinder */,
 				D5A541142DA844B3004514F7 /* TeeFinderTests */,
 				D5A5411E2DA844B3004514F7 /* TeeFinderUITests */,
@@ -264,9 +276,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				D5A5410C2DA844B3004514F7 /* TeeFinder.xcdatamodeld in Sources */,
+				D5A541342DA85860004514F7 /* Course+CoreDataClass.swift in Sources */,
+				D5A541372DA864A1004514F7 /* GolfCourseAPIModel.swift in Sources */,
+				D5A541352DA85860004514F7 /* Course+CoreDataProperties.swift in Sources */,
 				D5A541092DA844B3004514F7 /* Persistence.swift in Sources */,
 				D5A541022DA844B0004514F7 /* ContentView.swift in Sources */,
 				D5A541002DA844B0004514F7 /* TeeFinderApp.swift in Sources */,
+				D5A541392DA864DD004514F7 /* CourseSearchSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

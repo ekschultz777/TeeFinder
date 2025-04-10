@@ -12,19 +12,35 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Course.timestamp, ascending: true)],
         animation: .default)
-    private var items: FetchedResults<Item>
+    private var items: FetchedResults<Course>
+    @State private var courses: [CourseResponse] = []
+    
+    @State var searchQuery: String = ""
 
     var body: some View {
         NavigationView {
             List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
+                TextField("Search Courses", text: $searchQuery)
+                .onChange(of: searchQuery) { _, _ in
+                    print("check trie for \(searchQuery)")
+                }
+                .onSubmit {
+                    CourseSearchSession.shared.search(searchQuery) { response in
+                        self.courses = response.courses
                     }
+                }
+                ForEach(courses) { item in
+                    NavigationLink(item.location.address) {
+                        Text(item.location.address)
+                    }
+
+//                    NavigationLink {
+//                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
+//                    } label: {
+//                        Text(item.timestamp!, formatter: itemFormatter)
+//                    }
                 }
                 .onDelete(perform: deleteItems)
             }
@@ -38,13 +54,12 @@ struct ContentView: View {
                     }
                 }
             }
-            Text("Select an item")
         }
     }
 
     private func addItem() {
         withAnimation {
-            let newItem = Item(context: viewContext)
+            let newItem = Course(context: viewContext)
             newItem.timestamp = Date()
 
             do {
