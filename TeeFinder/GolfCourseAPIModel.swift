@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Main Model
-struct CoursesResponse: Codable {
+struct CourseSearchResponse: Codable {
     let courses: [CourseResponse]
     
     enum CodingKeys: String, CodingKey {
@@ -16,18 +16,33 @@ struct CoursesResponse: Codable {
     }
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let decodedCourses = try? container.decodeIfPresent([CourseResponse].self, forKey: .courses)
-        self.courses = decodedCourses ?? []
+        self.courses = try container.decode([CourseResponse].self, forKey: .courses)
+    }
+}
+
+struct CourseLookupResponse: Codable {
+    let course: CourseResponse
+    
+    enum CodingKeys: String, CodingKey {
+        case course
     }
 }
 
 // MARK: - Course Model
 struct CourseResponse: Codable, Identifiable {
-    let clubName: String?
-    let courseName: String?
+    let clubName: String
+    let courseName: String
     let id: Int
     let location: Location
     let tees: Tees?
+    
+    enum CodingKeys: String, CodingKey {
+        case clubName = "club_name"
+        case courseName = "course_name"
+        case id
+        case location
+        case tees
+    }
 }
 
 // MARK: - Location Model
