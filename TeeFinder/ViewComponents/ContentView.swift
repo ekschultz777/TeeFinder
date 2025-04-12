@@ -45,7 +45,7 @@ struct ContentView: View {
                 return
             }
             viewModel.search(query) { suggestions in
-                searchSuggestion = viewModel.autocomplete(query)
+                searchSuggestion = viewModel.autocomplete(searchQuery)
             }
         }
     }
