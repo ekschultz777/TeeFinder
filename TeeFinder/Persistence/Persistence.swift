@@ -66,9 +66,9 @@ extension PersistenceController {
                     #keyPath(Course.data): data,
                     #keyPath(Course.courseName): item.courseName,
                     #keyPath(Course.clubName): item.clubName,
-                    #keyPath(Course.address): item.location.address,
-                    #keyPath(Course.city): item.location.city,
-                    #keyPath(Course.state): item.location.state,
+                    #keyPath(Course.address): item.location.address as Any,
+                    #keyPath(Course.city): item.location.city as Any,
+                    #keyPath(Course.state): item.location.state as Any,
                 ]
             }
             let request = NSBatchInsertRequest(entityName: "Course", objects: itemDicts)

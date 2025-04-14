@@ -22,7 +22,7 @@ class CourseSearchSession {
     /// Constructs a search URL for querying courses by name.
     /// - Parameter query: The search term used to find courses.
     /// - Returns: A `URL` for the search endpoint, or `nil` if construction fails.
-    private func searchURL(query: String) -> URL? {
+    public func searchURL(query: String) -> URL? {
         var components = URLComponents()
         components.scheme = scheme
         components.host = host
@@ -36,7 +36,7 @@ class CourseSearchSession {
     /// Constructs a paginated URL for retrieving a list of courses.
     /// - Parameter page: The page number to request.
     /// - Returns: A `URL` for the paginated courses endpoint, or `nil` if construction fails.
-    private func coursesURL(page: Int) -> URL? {
+    public func coursesURL(page: Int) -> URL? {
         var components = URLComponents()
         components.scheme = self.scheme
         components.host = self.host
@@ -52,7 +52,7 @@ class CourseSearchSession {
     /// Creates a `URLRequest` with the appropriate authorization headers for a given URL.
     /// - Parameter url: The URL to request.
     /// - Returns: A configured `URLRequest` with API key authentication.
-    private func request(for url: URL) -> URLRequest {
+    public func request(for url: URL) -> URLRequest {
         var request = URLRequest(url: url)
         request.setValue("Key \(apiKey)", forHTTPHeaderField: "Authorization")
         return request
