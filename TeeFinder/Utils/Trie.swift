@@ -40,17 +40,17 @@ public extension Trie {
         }
     }
     
-    func get(key: String) -> Object? {
-        queue.sync {
-            // Find that the word exists in the Trie
-            var current: TrieNode = head
-            for char in Array(key) {
-                guard let node = current.children[char] else { return nil }
-                current = node
-            }
-            return current.end
-        }
-    }
+//    func get(key: String) -> Object? {
+//        queue.sync {
+//            // Find that the word exists in the Trie
+//            var current: TrieNode = head
+//            for char in Array(key) {
+//                guard let node = current.children[char] else { return nil }
+//                current = node
+//            }
+//            return current.end
+//        }
+//    }
     
     func remove(key: String) {
         queue.async { [unowned self] in
@@ -68,12 +68,12 @@ public extension Trie {
         }
     }
 
-    func autocomplete(_ prefix: String) -> String? {
-        return queue.sync {
+    func autocomplete(_ prefix: String, completion: @escaping (String?) -> Void) {
+        queue.async { [unowned self] in
             // Find that the word exists in the Trie
             var current: TrieNode<Object> = head
             for char in Array(prefix) {
-                guard let node = current.children[char] else { return nil }
+                guard let node = current.children[char] else { completion(nil); return }
                 current = node
             }
             
@@ -82,21 +82,21 @@ public extension Trie {
             stack.append((current, prefix))
             while !stack.isEmpty {
                 let (node, word) = stack.removeLast()
-                guard node.end == nil else { return word }
+                guard node.end == nil else { completion(word); return }
                 for child in node.children.values {
                     stack.append((child, word + String(child.value)))
                 }
             }
-            return nil
+            completion(nil)
         }
     }
     
-    func suggestions(_ prefix: String) -> [Object] {
-        queue.sync {
+    func suggestions(_ prefix: String, completion: @escaping ([Object]) -> Void) {
+        queue.async { [unowned self] in
             // Find that the word exists in the Trie
             var current: TrieNode = head
             for char in Array(prefix) {
-                guard let node = current.children[char] else { return [] }
+                guard let node = current.children[char] else { completion([]); return }
                 current = node
             }
 
@@ -113,7 +113,7 @@ public extension Trie {
                     stack.append((child, word + String(child.value)))
                 }
             }
-            return suggestions
+            completion(suggestions)
         }
     }
 }

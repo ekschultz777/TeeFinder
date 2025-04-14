@@ -14,6 +14,9 @@ struct TeeFinderApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .background {
+                    Color.black.ignoresSafeArea()
+                }
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }

@@ -11,7 +11,7 @@ import SwiftUI
 struct AutocompleteTextField: View {
     @Binding private(set) var searchQuery: String
     @Binding private(set) var searchSuggestion: String
-    public var suggest: (String) -> String
+    public var suggest: (String) -> Void
     public var onChange: (String) -> Void
     public var onSubmit: (String) -> Void
     
@@ -27,7 +27,7 @@ struct AutocompleteTextField: View {
                         self.searchSuggestion = ""
                         return
                     }
-                    searchSuggestion = suggest(searchQuery)
+                    suggest(searchQuery)
                 }
                 .onSubmit {
                     searchSuggestion = ""

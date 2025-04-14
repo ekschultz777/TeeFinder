@@ -14,7 +14,7 @@ typealias CourseID = Int
 struct CourseModel: Codable, Identifiable {
     /// GolfCourseAPI gives back some course names that have irrelevant information before a \t.
     /// In order to fix this, we only need the part of the information after the tab if one is present.
-    /// - Parameter string: A string.
+    /// - Parameter string: A string to format.
     /// - Returns: The formatted string.
     private static func format(_ string: String) -> String {
         let splitValue = string.split(separator: "\t")

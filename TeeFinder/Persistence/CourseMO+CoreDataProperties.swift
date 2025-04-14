@@ -16,9 +16,8 @@ extension Course {
         return NSFetchRequest<Course>(entityName: "Course")
     }
 
-    // TODO: Remove data and add properties
     @NSManaged public var data: Data
-    @NSManaged public var id: Int32
+    @NSManaged public var apiId: Int32
 }
 
 extension Course : Identifiable {
