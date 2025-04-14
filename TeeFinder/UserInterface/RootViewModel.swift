@@ -9,8 +9,9 @@ import Foundation
 import SwiftUI
 import CoreData
 
+
 class RootViewModel: ObservableObject, CourseListViewModel {
-    private let searchTrie = Trie<CourseID>()
+    let searchTrie = Trie<CourseID>()
     @Published private(set) var items: [CourseModel] = []
     @Published private(set) var syncing: Bool
     @Published private(set) var error: Error?
@@ -22,7 +23,7 @@ class RootViewModel: ObservableObject, CourseListViewModel {
         syncing = true
         commonInit()
     }
-        
+    
     private func commonInit() {
         // Sync to the API on launch. This function will only sync pages that have
         // not already been synced.
@@ -75,11 +76,11 @@ class RootViewModel: ObservableObject, CourseListViewModel {
         searchTrie.insert(key: address, value: id)
         searchTrie.insert(key: city, value: id)
     }
-
+    
     /// Computes a difference between the currently shown items and the new list of items,
     /// and updates the stored array in-place.
     /// - Parameter updatedItems: The new collection of items to update the current collection with.
-    private func updateCollection(with updatedItems: [CourseID]) {
+    public func updateCollection(with updatedItems: [CourseID]) {
         // Time complexity is O(n * m) for difference(from:), where
         // n is the count of the collection and m is parameter.count.
         let result = PersistenceController.shared.fetchCourses(from: updatedItems)
@@ -105,7 +106,7 @@ class RootViewModel: ObservableObject, CourseListViewModel {
             }
         }
     }
-        
+    
     /// A function that searches for courses matching the course name and club name.
     /// The currently used API has no documented way to search by location.
     /// - Parameters:
@@ -129,7 +130,7 @@ class RootViewModel: ObservableObject, CourseListViewModel {
                 completion()
                 return
             }
-                        
+            
             // Fetch items with prefix query. If we get results back, we can
             // Still proceed with the API call.
             let result = PersistenceController.shared.fetchItems(withPrefix: query)
@@ -169,7 +170,7 @@ class RootViewModel: ObservableObject, CourseListViewModel {
     ///   - items: An array to merge.
     ///   - other: The array to consume into the first array.
     /// - Returns: The merged array.
-    private func merge<T: Hashable>(_ items: [T], with other: consuming [T]) -> [T] {
+    public func merge<T: Hashable>(_ items: [T], with other: consuming [T]) -> [T] {
         var hashMap: [Int: T] = [:]
         for item in items {
             hashMap[item.hashValue] = item
@@ -181,7 +182,6 @@ class RootViewModel: ObservableObject, CourseListViewModel {
     }
     
     public func autocomplete(_ prefix: String) -> String {
-        assert(!Thread.isMainThread)
         return searchTrie.autocomplete(prefix) ?? ""
     }
 }

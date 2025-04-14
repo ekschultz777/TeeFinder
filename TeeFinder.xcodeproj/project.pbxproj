@@ -8,13 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		D55A42282DA9B28B00D4B461 /* RootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55A42272DA9B28B00D4B461 /* RootViewModel.swift */; };
+		D582BB292DADA3F70055037E /* RootViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D582BB282DADA3F70055037E /* RootViewModelTests.swift */; };
 		D5A541002DA844B0004514F7 /* TeeFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A540FF2DA844B0004514F7 /* TeeFinderApp.swift */; };
 		D5A541022DA844B0004514F7 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A541012DA844B0004514F7 /* RootView.swift */; };
 		D5A541042DA844B3004514F7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5A541032DA844B3004514F7 /* Assets.xcassets */; };
 		D5A541072DA844B3004514F7 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5A541062DA844B3004514F7 /* Preview Assets.xcassets */; };
 		D5A541092DA844B3004514F7 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A541082DA844B3004514F7 /* Persistence.swift */; };
 		D5A5410C2DA844B3004514F7 /* TeeFinder.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D5A5410A2DA844B3004514F7 /* TeeFinder.xcdatamodeld */; };
-		D5A541162DA844B3004514F7 /* TeeFinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A541152DA844B3004514F7 /* TeeFinderTests.swift */; };
 		D5A541202DA844B3004514F7 /* TeeFinderUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A5411F2DA844B3004514F7 /* TeeFinderUITests.swift */; };
 		D5A541222DA844B3004514F7 /* TeeFinderUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A541212DA844B3004514F7 /* TeeFinderUITestsLaunchTests.swift */; };
 		D5A541372DA864A1004514F7 /* CourseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A541362DA864A1004514F7 /* CourseModel.swift */; };
@@ -58,6 +58,7 @@
 
 /* Begin PBXFileReference section */
 		D55A42272DA9B28B00D4B461 /* RootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewModel.swift; sourceTree = "<group>"; };
+		D582BB282DADA3F70055037E /* RootViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewModelTests.swift; sourceTree = "<group>"; };
 		D5A540FC2DA844B0004514F7 /* TeeFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeeFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5A540FF2DA844B0004514F7 /* TeeFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeeFinderApp.swift; sourceTree = "<group>"; };
 		D5A541012DA844B0004514F7 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -66,7 +67,6 @@
 		D5A541082DA844B3004514F7 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		D5A5410B2DA844B3004514F7 /* TeeFinder.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TeeFinder.xcdatamodel; sourceTree = "<group>"; };
 		D5A541112DA844B3004514F7 /* TeeFinderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TeeFinderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D5A541152DA844B3004514F7 /* TeeFinderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeeFinderTests.swift; sourceTree = "<group>"; };
 		D5A5411B2DA844B3004514F7 /* TeeFinderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TeeFinderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5A5411F2DA844B3004514F7 /* TeeFinderUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeeFinderUITests.swift; sourceTree = "<group>"; };
 		D5A541212DA844B3004514F7 /* TeeFinderUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeeFinderUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -172,9 +172,9 @@
 		D5A541142DA844B3004514F7 /* TeeFinderTests */ = {
 			isa = PBXGroup;
 			children = (
-				D5A541152DA844B3004514F7 /* TeeFinderTests.swift */,
 				D5D662332DAD360B00B0FB4D /* TrieTests.swift */,
 				D5D662352DAD370C00B0FB4D /* CourseSearchSessionTests.swift */,
+				D582BB282DADA3F70055037E /* RootViewModelTests.swift */,
 			);
 			path = TeeFinderTests;
 			sourceTree = "<group>";
@@ -420,8 +420,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D5A541162DA844B3004514F7 /* TeeFinderTests.swift in Sources */,
 				D5D662362DAD370C00B0FB4D /* CourseSearchSessionTests.swift in Sources */,
+				D582BB292DADA3F70055037E /* RootViewModelTests.swift in Sources */,
 				D5D662342DAD360B00B0FB4D /* TrieTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

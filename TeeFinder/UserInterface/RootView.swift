@@ -28,7 +28,7 @@ struct ContentView: View {
                         .padding()
                     AutocompleteTextField(searchQuery: $viewModel.searchQuery,
                                           searchSuggestion: $viewModel.searchSuggestion,
-                                          suggest: { viewModel.autocomplete($0) },
+                                          suggest: { assert(!Thread.isMainThread); return viewModel.autocomplete($0) },
                                           onChange: { search($0, comprehensive: false) },
                                           onSubmit: { search($0, comprehensive: true) })
                     Spacer()
@@ -88,6 +88,8 @@ struct ContentView: View {
                 guard !comprehensive else { return }
                 // Check that the suggestion still matches the current searchQuery
                 DispatchQueue.global(qos: .userInitiated).async {
+                    assert(!Thread.isMainThread)
+                    // Ensure we aren't using autocomplete on the main thread.
                     let suggestion = viewModel.autocomplete(viewModel.searchQuery)
                     DispatchQueue.main.async {
                         if suggestion.hasPrefix(viewModel.searchQuery) {
