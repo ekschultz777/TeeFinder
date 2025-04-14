@@ -2,6 +2,9 @@
 
 An app built to give users a way to search for golf courses around the world by location, course name, or club name. Allows users to view course statistics and other detailed information. Built in Swift, SwiftUI, and Core Data as a persistent store of searches.
 
+Video Demonstration:
+https://vimeo.com/1075479559
+
 ## Features
 
 - Browse a list of golf courses by search
