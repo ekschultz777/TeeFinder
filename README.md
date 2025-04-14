@@ -16,7 +16,7 @@ An app built to give users a way to search for golf courses around the world by 
 ## Getting Started
 
 1. Clone the repository:
-   git clone https://github.com/yourusername/TeeFinder.git
+   git clone https://github.com/ekschultz777/TeeFinder.git
    cd TeeFinder
 
 2. Open the project in Xcode
