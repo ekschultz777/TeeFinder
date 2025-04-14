@@ -6,7 +6,6 @@ Built to
 
 - Browse a list of golf courses by search
 - View detailed information for each course  
-- In-app search functionality for fast querying
 
 ## Requirements
 
@@ -24,8 +23,17 @@ Built to
 open TeeFinder.xcodeproj
 Build and run the app on a simulator or physical iOS device.
 
+# Architecture
+This app employs an MVVM architecture where the model is given to a view model, 
+which then handles buisness logic to provide to a view.
+
+# Code Quality
+Unit tests are provided for data structures and algorithms and crucial functions are documented.
+
 # Data Handling and API Limitations
-TeeFinder relies on a third-party API, __GolfCourseAPI__, to retrieve golf course data. At present, the API does not support querying courses by geographic location or other filters. As a result, the application implements a workaround by loading the entire database of courses upon the first launch.
+This app relies on a third-party API, __GolfCourseAPI__, to retrieve golf course data. 
+At present, the API does not support querying courses by geographic location or other filters. 
+As a result, the application implements a workaround by loading the database of courses upon the first launch.
 
 This approach allows the app to:
 
@@ -34,12 +42,10 @@ This approach allows the app to:
 - Avoid repeated API calls for each query
 
 Trade-Offs
-While this method improves search performance, it introduces a significant upfront cost in terms of network usage and initial load time. In a production environment, this would not be considered a scalable or user-friendly solution. Ideally, the API should provide endpoints that support location-based queries.
+While this method improves search performance, it introduces a significant upfront cost in terms of network usage and initial load time. In a production environment, this would not be considered a scalable or user-friendly solution. Ideally, the API should provide endpoints that support location and address based queries.
 
 Implementation Notes
 The app is built using native Swift and SwiftUI, and utilizes URLSession for networking.
-
-All course queries are stored locally in memory after the initial load to facilitate fast search operations.
 
 Contact
 Please feel free to submit a pull request.
