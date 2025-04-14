@@ -2,7 +2,7 @@
 //  Course+CoreDataClass.swift
 //  TeeFinder
 //
-//  Created by Ted Schultz on 4/11/25.
+//  Created by Ted Schultz on 4/14/25.
 //
 //
 

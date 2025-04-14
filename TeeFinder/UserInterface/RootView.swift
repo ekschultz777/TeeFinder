@@ -28,12 +28,7 @@ struct ContentView: View {
                         .padding()
                     AutocompleteTextField(searchQuery: $searchQuery,
                                           searchSuggestion: $searchSuggestion,
-                                          suggest: { query in
-                        viewModel.autocomplete(query) { suggestion in
-                            guard query == searchQuery else { return }
-                            searchSuggestion = suggestion ?? ""
-                        }
-                    },
+                                          suggest: { viewModel.autocomplete($0) },
                                           onChange: { search($0, comprehensive: false) },
                                           onSubmit: { search($0, comprehensive: true) })
                     Spacer()
@@ -74,12 +69,9 @@ struct ContentView: View {
         }
         if comprehensive { searchSuggestion = "" }
         debounce(for: 0.25) {
-            viewModel.search(query, isValid: { $0 == searchQuery }) { suggestions in
+            viewModel.search(query) { suggestions in
                 guard !comprehensive else { return }
-                viewModel.autocomplete(searchQuery) { suggestion in
-                    guard query == searchQuery else { return }
-                    searchSuggestion = suggestion ?? ""
-                }
+                searchSuggestion = viewModel.autocomplete(searchQuery)
             }
         }
     }

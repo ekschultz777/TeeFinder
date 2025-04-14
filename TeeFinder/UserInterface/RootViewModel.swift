@@ -19,36 +19,26 @@ class RootViewModel: ObservableObject, CourseListViewModel {
         syncing = true
         commonInit()
     }
-    
+        
     private func commonInit() {
-//        DispatchQueue.global().async {
-            // First, sync from Core Data
-            let result = PersistenceController.shared.fetchAllCourses()
-            if case .success(let courses) = result {
-                courses.forEach { word in
-                    DispatchQueue.global(qos: .userInitiated).async {
-                        self.updateTrie(with: word)
-                    }
+        // Sync to the API on launch. This function will only sync pages that have
+        // not already been synced.
+        CourseSearchSession.shared.iterateCourses(iteration: { [weak self] result in
+            switch result {
+            case .success(let courses):
+                // Update or create a new NSManagedObject
+                PersistenceController.shared.persist(courses, synchronous: false) { errors in
+                    self?.displayError(from: errors)
                 }
+                // Now update our trie with the new course
+                courses.forEach { self?.updateTrie(with: $0) }
+            case .failure(let error):
+                self?.displayError(from: [error])
             }
-            // Second, get items from the API and store them so we can search using them.
-            CourseSearchSession.shared.iterateCourses(iteration: { [weak self] result in
-                switch result {
-                case .success(let courses):
-                    // Update or create a new NSManagedObject
-                    PersistenceController.shared.persist(courses, synchronous: false) { errors in
-                        self?.displayError(from: errors)
-                    }
-                    // Now update our trie with the new course
-                    courses.forEach { self?.updateTrie(with: $0) }
-                case .failure(let error):
-                    self?.displayError(from: [error])
-                }
-            }, completion: { [weak self] in
-                guard let self else { return }
-                syncing = false
-            })
-//        }
+        }, completion: { [weak self] in
+            guard let self else { return }
+            syncing = false
+        })
     }
     
     /// A convenience method to throw an error from the main thread.
@@ -78,11 +68,9 @@ class RootViewModel: ObservableObject, CourseListViewModel {
         searchTrie.insert(key: course.clubName, value: id)
         searchTrie.insert(key: course.courseName, value: id)
         guard let address = course.location.address,
-              let city = course.location.city,
-              let state = course.location.state else { return }
+              let city = course.location.city else { return }
         searchTrie.insert(key: address, value: id)
-//        searchTrie.insert(key: city, value: id)
-//        searchTrie.insert(key: state, value: id)
+        searchTrie.insert(key: city, value: id)
     }
 
     /// Computes a difference between the currently shown items and the new list of items,
@@ -119,45 +107,52 @@ class RootViewModel: ObservableObject, CourseListViewModel {
     ///   - query: The query by which to search.
     ///   - isValid: A check to ensure the current search is still valid after checking the trie.
     ///   - completion: A completion handler that will run once the search is complete.
-    public func search(_ query: String, isValid: @escaping (String) -> Bool, completion: @escaping ([CourseID]) -> Void) {
+    public func search(_ query: String, completion: @escaping ([CourseID]) -> Void) {
+        // If we have an empty query, then we will update the search results with nothing.
         if query.isEmpty {
             self.updateCollection(with: [])
             return
         }
-        // If we have already searched this, then we have no need to update further.
-        // In the future, this may need to be bypassed when a certain duration runs,
-        // or this might implement a time based cache to determine if we should
-        // fetch new data.
-        searchTrie.suggestions(query) { [weak self] suggestions in
-            guard let self, isValid(query) else { return }
-            var suggestions = suggestions
-            if !suggestions.isEmpty {
-                updateCollection(with: suggestions)
-                completion(suggestions)
-                return
-            }
-            
-            CourseSearchSession.shared.search(query) { [weak self] response in
-                guard let self else { return }
-                switch response {
-                case .success(let searchResponse):
-                    searchResponse.courses.forEach { self.updateTrie(with: $0) }
-                    PersistenceController.shared.persist(searchResponse.courses, synchronous: true) { [weak self] errors in
-                        guard let self else { return }
-                        self.displayError(from: errors)
-                    }
-                    // FIXME: Get suggestions from trie, not search result
-//                    suggestions = searchTrie.suggestions(query)
-                    updateCollection(with: searchResponse.courses.map { $0.id })
-                case .failure(let error):
-                    displayError(from: [error])
+        // If we have already searched this or loaded our cache here, then we have
+        // no need check update further.
+        let suggestions = searchTrie.suggestions(query)
+        if !suggestions.isEmpty {
+            updateCollection(with: suggestions)
+            completion(suggestions)
+            return
+        }
+        
+        // Fetch items with prefix query. If we get results back, we can
+        // Still proceed with the API call.
+        let result = PersistenceController.shared.fetchItems(withPrefix: query)
+        switch result {
+        case .success(let courses):
+            updateCollection(with: courses.map { $0.id })
+            courses.forEach { updateTrie(with: $0) }
+        default:
+            break
+        }
+
+        // If we don't have any cache in the trie or Core Data,
+        // then use the API to get results.
+        CourseSearchSession.shared.search(query) { [weak self] response in
+            guard let self else { return }
+            switch response {
+            case .success(let searchResponse):
+                searchResponse.courses.forEach { self.updateTrie(with: $0) }
+                PersistenceController.shared.persist(searchResponse.courses, synchronous: true) { [weak self] errors in
+                    guard let self else { return }
+                    self.displayError(from: errors)
                 }
-                completion(suggestions)
+                updateCollection(with: searchResponse.courses.map { $0.id })
+            case .failure(let error):
+                displayError(from: [error])
             }
+            completion(suggestions)
         }
     }
     
-    public func autocomplete(_ prefix: String, completion: @escaping (String?) -> Void) {
-        self.searchTrie.autocomplete(prefix, completion: completion)
+    public func autocomplete(_ prefix: String) -> String {
+        self.searchTrie.autocomplete(prefix) ?? ""
     }
 }

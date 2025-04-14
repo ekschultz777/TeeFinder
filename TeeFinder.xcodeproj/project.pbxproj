@@ -29,9 +29,9 @@
 		D5B5366A2DA8C3EE00778AE3 /* Trie.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B536692DA8C3EE00778AE3 /* Trie.swift */; };
 		D5BC7A662DAA1EEC00F38C3B /* CourseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BC7A652DAA1EEB00F38C3B /* CourseListView.swift */; };
 		D5BC7A682DAA23C000F38C3B /* AutocompleteTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BC7A672DAA23C000F38C3B /* AutocompleteTextField.swift */; };
-		D5BC7A732DAA43DF00F38C3B /* CourseMO+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BC7A712DAA43DF00F38C3B /* CourseMO+CoreDataClass.swift */; };
-		D5BC7A742DAA43DF00F38C3B /* CourseMO+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BC7A722DAA43DF00F38C3B /* CourseMO+CoreDataProperties.swift */; };
 		D5D6622E2DACE16100B0FB4D /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D6622D2DACE16100B0FB4D /* ErrorView.swift */; };
+		D5D662312DAD27DF00B0FB4D /* Course+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D6622F2DAD27DF00B0FB4D /* Course+CoreDataClass.swift */; };
+		D5D662322DAD27DF00B0FB4D /* Course+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D662302DAD27DF00B0FB4D /* Course+CoreDataProperties.swift */; };
 		D5DE8F572DAC6C63009F7DC8 /* CourseSearchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DE8F562DAC6C63009F7DC8 /* CourseSearchResponse.swift */; };
 		D5DE8F592DAC958D009F7DC8 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DE8F582DAC958D009F7DC8 /* AppColor.swift */; };
 /* End PBXBuildFile section */
@@ -79,9 +79,9 @@
 		D5B536692DA8C3EE00778AE3 /* Trie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trie.swift; sourceTree = "<group>"; };
 		D5BC7A652DAA1EEB00F38C3B /* CourseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseListView.swift; sourceTree = "<group>"; };
 		D5BC7A672DAA23C000F38C3B /* AutocompleteTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutocompleteTextField.swift; sourceTree = "<group>"; };
-		D5BC7A712DAA43DF00F38C3B /* CourseMO+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CourseMO+CoreDataClass.swift"; sourceTree = "<group>"; };
-		D5BC7A722DAA43DF00F38C3B /* CourseMO+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CourseMO+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		D5D6622D2DACE16100B0FB4D /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
+		D5D6622F2DAD27DF00B0FB4D /* Course+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Course+CoreDataClass.swift"; sourceTree = "<group>"; };
+		D5D662302DAD27DF00B0FB4D /* Course+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Course+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		D5DE8F562DAC6C63009F7DC8 /* CourseSearchResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseSearchResponse.swift; sourceTree = "<group>"; };
 		D5DE8F582DAC958D009F7DC8 /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -220,8 +220,8 @@
 			isa = PBXGroup;
 			children = (
 				D5A541082DA844B3004514F7 /* Persistence.swift */,
-				D5BC7A712DAA43DF00F38C3B /* CourseMO+CoreDataClass.swift */,
-				D5BC7A722DAA43DF00F38C3B /* CourseMO+CoreDataProperties.swift */,
+				D5D6622F2DAD27DF00B0FB4D /* Course+CoreDataClass.swift */,
+				D5D662302DAD27DF00B0FB4D /* Course+CoreDataProperties.swift */,
 			);
 			path = Persistence;
 			sourceTree = "<group>";
@@ -382,6 +382,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D5B482DF2DACC43F000D34A6 /* CourseListItemViewModel.swift in Sources */,
+				D5D662312DAD27DF00B0FB4D /* Course+CoreDataClass.swift in Sources */,
+				D5D662322DAD27DF00B0FB4D /* Course+CoreDataProperties.swift in Sources */,
 				D5B482D62DACBBB7000D34A6 /* CourseDetailView.swift in Sources */,
 				D5B482D12DACBB27000D34A6 /* CourseListItemView.swift in Sources */,
 				D5A5410C2DA844B3004514F7 /* TeeFinder.xcdatamodeld in Sources */,
@@ -390,9 +392,7 @@
 				D5DE8F592DAC958D009F7DC8 /* AppColor.swift in Sources */,
 				D5B5366A2DA8C3EE00778AE3 /* Trie.swift in Sources */,
 				D5A541092DA844B3004514F7 /* Persistence.swift in Sources */,
-				D5BC7A732DAA43DF00F38C3B /* CourseMO+CoreDataClass.swift in Sources */,
 				D5B482E12DACC72F000D34A6 /* CourseListViewModel.swift in Sources */,
-				D5BC7A742DAA43DF00F38C3B /* CourseMO+CoreDataProperties.swift in Sources */,
 				D5B482DC2DACBEFE000D34A6 /* TeeDetailViewModel.swift in Sources */,
 				D5A541022DA844B0004514F7 /* RootView.swift in Sources */,
 				D5A541002DA844B0004514F7 /* TeeFinderApp.swift in Sources */,

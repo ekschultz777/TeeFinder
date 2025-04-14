@@ -10,12 +10,16 @@ import CoreData
 class PersistenceController {
     static let shared = PersistenceController()
     
+    
+    /// A background context for use in this class.
+    /// The context will keep items in memory, so fetches may be more efficient.
     private lazy var backgroundContext = {
         let context = container.newBackgroundContext()
         context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
         return context
     }()
 
+    /// NSPersistentContainer simplifies the creation and management of the Core Data stack by handling the creation of the managed object model.
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
@@ -59,7 +63,12 @@ extension PersistenceController {
                 guard let data = try? JSONEncoder().encode(item) else { return nil }
                 return [
                     #keyPath(Course.apiId): item.id,
-                    #keyPath(Course.data): data
+                    #keyPath(Course.data): data,
+                    #keyPath(Course.courseName): item.courseName,
+                    #keyPath(Course.clubName): item.clubName,
+                    #keyPath(Course.address): item.location.address,
+                    #keyPath(Course.city): item.location.city,
+                    #keyPath(Course.state): item.location.state,
                 ]
             }
             let request = NSBatchInsertRequest(entityName: "Course", objects: itemDicts)
@@ -120,4 +129,23 @@ extension PersistenceController {
         }
     }
 
+    public func fetchItems(withPrefix prefix: String) -> Result<[CourseModel], Error> {
+        return backgroundContext.performAndWait {
+            let fetchRequest: NSFetchRequest<Course> = Course.fetchRequest()
+            fetchRequest.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+                NSPredicate(format: "\(#keyPath(Course.courseName)) BEGINSWITH[cd] %@", NSString(string: prefix)),
+                NSPredicate(format: "\(#keyPath(Course.clubName)) BEGINSWITH[cd] %@", NSString(string: prefix)),
+                NSPredicate(format: "\(#keyPath(Course.address)) BEGINSWITH[cd] %@", NSString(string: prefix)),
+                NSPredicate(format: "\(#keyPath(Course.city)) BEGINSWITH[cd] %@", NSString(string: prefix)),
+                NSPredicate(format: "\(#keyPath(Course.state)) BEGINSWITH[cd] %@", NSString(string: prefix)),
+            ])
+            
+            do {
+                let results = try backgroundContext.fetch(fetchRequest)
+                return .success(results.compactMap { try? JSONDecoder().decode(CourseModel.self, from: $0.data) })
+            } catch {
+                return .failure(error)
+            }
+        }
+    }
 }
