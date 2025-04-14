@@ -35,7 +35,8 @@ class RootViewModel: ObservableObject, CourseListViewModel {
             case .success(let courses):
                 // Update or create a new NSManagedObject
                 PersistenceController.shared.persist(courses, synchronous: false) { errors in
-                    // We don't need to alert the user of caching errors
+                    // We don't need to alert the user of cache errors
+                    guard !errors.isEmpty else { return }
                     print(errors)
                 }
                 // Now update our trie with the new course
@@ -154,7 +155,8 @@ class RootViewModel: ObservableObject, CourseListViewModel {
                 case .success(let searchResponse):
                     searchResponse.courses.forEach { self.updateTrie(with: $0) }
                     PersistenceController.shared.persist(searchResponse.courses, synchronous: true) { errors in
-                        // We don't need to alert the user of caching errors.
+                        // We don't need to alert the user of cache errors.
+                        guard !errors.isEmpty else { return }
                         print(errors)
                     }
                     let mergedResult = merge(suggestions, with: searchResponse.courses.map { $0.id })
