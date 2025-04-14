@@ -49,7 +49,7 @@ class RootViewModel: ObservableObject, CourseListViewModel {
         })
     }
     
-    @Published private var debounceWork: DispatchWorkItem? = nil
+    private var debounceWork: DispatchWorkItem? = nil
     /// Simple debounce function.
     /// - Parameters:
     ///   - time: the amount of time to debounce for.
@@ -93,9 +93,9 @@ class RootViewModel: ObservableObject, CourseListViewModel {
     }
     
     /// Computes a difference between the currently shown items and the new list of items,
-    /// and updates the stored array in-place.
+    /// and updates the stored array of items in-place.
     /// - Parameter updatedItems: The new collection of items to update the current collection with.
-    public func updateCollection(with updatedItems: [CourseID]) {
+    private func updateCollection(with updatedItems: [CourseID]) {
         // Time complexity is O(n * m) for difference(from:), where
         // n is the count of the collection and m is parameter.count.
         let result = PersistenceController.shared.fetchCourses(from: updatedItems)
@@ -125,34 +125,28 @@ class RootViewModel: ObservableObject, CourseListViewModel {
     private func _search(_ query: String, comprehensive: Bool, completion: @escaping () -> Void) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
-            // If we have an empty query, then we will update the search results with nothing.
-            if query.isEmpty {
-                self.updateCollection(with: [])
-                return
-            }
             // Trie.suggestions() is synchronous and we don't want to block the main thread.
             // Ensure this is called on a background thread.
             assert(!Thread.isMainThread)
-            let suggestions = searchTrie.suggestions(query)
+            // 1. Update the collection from the trie
+            var suggestions = searchTrie.suggestions(query)
             if !suggestions.isEmpty && !comprehensive {
                 updateCollection(with: suggestions)
                 completion()
                 return
             }
             
-            // Fetch items with prefix query. If we get results back, we can
-            // Still proceed with the API call.
+            // 2. Fetch items with prefix query and merge them with the trie suggestions.
             let result = PersistenceController.shared.fetchItems(withPrefix: query)
             switch result {
             case .success(let courses):
-                updateCollection(with: courses.map { $0.id })
+                suggestions = merge(suggestions, with: courses.map { $0.id })
                 courses.forEach { self.updateTrie(with: $0) }
             default:
                 break
             }
             
-            // If we don't have any cache in the trie or Core Data,
-            // then use the API to get results.
+            // 3. Fetch items from the API and merge them with the trie and Core Data cache.
             APISession.shared.search(query) { [weak self] response in
                 guard let self else { return }
                 switch response {
@@ -163,8 +157,11 @@ class RootViewModel: ObservableObject, CourseListViewModel {
                         guard !errors.isEmpty else { return }
                         print(errors)
                     }
-                    let mergedResult = merge(suggestions, with: searchResponse.courses.map { $0.id })
-                    updateCollection(with: mergedResult)
+                    
+                    if query == self.searchQuery {
+                        let mergedResult = merge(suggestions, with: searchResponse.courses.map { $0.id })
+                        updateCollection(with: mergedResult)
+                    }
                 case .failure(let error):
                     if comprehensive {
                         // We don't need to show an error when we are optionally
@@ -184,26 +181,23 @@ class RootViewModel: ObservableObject, CourseListViewModel {
     ///   - query: The query by which to search.
     ///   - isValid: A check to ensure the current search is still valid after checking the trie.
     ///   - completion: A completion handler that will run once the search is complete.
-    public func search(_ query: String, comprehensive: Bool) {
-        if comprehensive { searchSuggestion = "" }
+    public func search(_ query: String, comprehensive: Bool, completion: (() -> Void)? = nil) {
+        if query.isEmpty {
+            searchSuggestion = ""
+            debounceWork?.cancel()
+            updateCollection(with: [])
+            completion?()
+            return
+        }
+        if comprehensive {
+            searchSuggestion = ""
+        }
         debounce(for: 0.25) { [weak self] in
             guard let self else { return }
-            _search(query, comprehensive: comprehensive) { [weak self] in
-                guard let self, !comprehensive else { return }
-                // Check that the suggestion still matches the current searchQuery
-                DispatchQueue.global(qos: .userInitiated).async {
-                    assert(!Thread.isMainThread)
-                    // Ensure we aren't using autocomplete on the main thread.
-                    let suggestion = self.autocomplete(self.searchQuery)
-                    DispatchQueue.main.async {
-                        if suggestion.hasPrefix(self.searchQuery) {
-                            self.searchSuggestion = suggestion
-                        } else {
-                            // Clear autocomplete if the suggestion is no longer valid
-                            self.searchSuggestion = ""
-                        }
-                    }
-                }
+            _search(query, comprehensive: comprehensive) {
+                completion?()
+                guard !comprehensive else { return }
+                self.suggestAutocompletion()
             }
         }
     }
@@ -234,10 +228,6 @@ class RootViewModel: ObservableObject, CourseListViewModel {
 extension RootViewModel: AutocompleteViewModel {
     /// Suggests an autocompletion to the text field this is supplied to.
     public func suggestAutocompletion() {
-        if searchQuery == "" {
-            searchSuggestion = ""
-            return
-        }
         // Run suggestion lookup on a background queue, it will block the thread it is run on.
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
@@ -246,7 +236,7 @@ extension RootViewModel: AutocompleteViewModel {
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
                 // Check that the suggestion still matches the current searchQuery
-                if suggestion.hasPrefix(searchQuery) {
+                if suggestion.hasPrefix(searchQuery) && !self.searchQuery.isEmpty {
                     searchSuggestion = suggestion
                 } else {
                     // Clear the suggestion it if it's no longer valid
@@ -255,5 +245,4 @@ extension RootViewModel: AutocompleteViewModel {
             }
         }
     }
-
 }

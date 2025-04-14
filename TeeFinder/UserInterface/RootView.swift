@@ -27,26 +27,11 @@ struct ContentView: View {
                                           onChange: { search($0, comprehensive: false) },
                                           onSubmit: { search($0, comprehensive: true) })
                     Spacer()
-                    if viewModel.syncing && comprehensiveSearch {
+                    if comprehensiveSearch {
                         ProgressView()
                             .tint(AppColor.tertiaryForegroundColor) // bright color
                             .scaleEffect(1.5)
                             .padding()
-                    } else if comprehensiveSearch {
-                        ProgressView()
-                            .tint(AppColor.tertiaryForegroundColor) // bright color
-                            .scaleEffect(1.5)
-                            .padding()
-                            .onAppear {
-                                // Optionally, for aesthetic, we can show a progress indicator to
-                                // show that the user's request was noted.
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                    guard !viewModel.syncing else { return }
-                                    withAnimation {
-                                        comprehensiveSearch = false
-                                    }
-                                }
-                            }
                     }
                     CourseListView(viewModel: viewModel)
                 }
@@ -60,7 +45,7 @@ struct ContentView: View {
                 // This is the case that we are still performing a comprehensive
                 // search when syncing finishes. If this is the case, we can
                 // remove the progress view.
-                if !viewModel.syncing && comprehensiveSearch {
+                if comprehensiveSearch {
                     withAnimation {
                         comprehensiveSearch = false
                     }
@@ -78,7 +63,13 @@ struct ContentView: View {
         withAnimation {
             comprehensiveSearch = comprehensive
         }
-        viewModel.search(query, comprehensive: comprehensive)
+        viewModel.search(query, comprehensive: comprehensive) {
+            if comprehensiveSearch {
+                withAnimation {
+                    comprehensiveSearch = false
+                }
+            }
+        }
     }
 }
 
