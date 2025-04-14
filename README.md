@@ -21,6 +21,8 @@ https://vimeo.com/1075479559
 1. Clone the repository:
    git clone https://github.com/ekschultz777/TeeFinder.git
    cd TeeFinder
+   
+   NOTE: If the app throws errors that data cannot be found, this may be due to the tier of the subscription which heavily limits API calls. If this is an issue, you may create a free account at https://golfcourseapi.com/ and use the API key to initialize the APISession class.
 
 2. Open the project in Xcode
 open TeeFinder.xcodeproj
