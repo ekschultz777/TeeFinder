@@ -14,6 +14,8 @@ struct CourseListItemView: View {
     var body: some View {
         NavigationLink(destination: {
             CourseDetailView(viewModel: CourseDetailViewModel(viewModel.model))
+                .toolbarColorScheme(.dark, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
         }, label: {
             HStack(alignment: .top, spacing: 15) {
                 Image(systemName: "flag.circle.fill")

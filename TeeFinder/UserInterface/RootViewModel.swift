@@ -24,6 +24,9 @@ class RootViewModel: ObservableObject, CourseListViewModel {
         commonInit()
     }
     
+    /// This function will load the API database locally. This is an expensive operation and shouldn't be done in production.
+    /// A better alternative for production code would be to allow the API to search by location so the client doesn't have to
+    /// do location searching manually.
     private func commonInit() {
         // Sync to the API on launch. This function will only sync pages that have
         // not already been synced.
@@ -32,12 +35,13 @@ class RootViewModel: ObservableObject, CourseListViewModel {
             case .success(let courses):
                 // Update or create a new NSManagedObject
                 PersistenceController.shared.persist(courses, synchronous: false) { errors in
-                    self?.displayError(from: errors)
+                    // We don't need to alert the user of caching errors
+                    print(errors)
                 }
                 // Now update our trie with the new course
                 courses.forEach { self?.updateTrie(with: $0) }
             case .failure(let error):
-                self?.displayError(from: [error])
+                print("Failed to sync: \(error)")
             }
         }, completion: { [weak self] in
             guard let self else { return }
@@ -149,14 +153,19 @@ class RootViewModel: ObservableObject, CourseListViewModel {
                 switch response {
                 case .success(let searchResponse):
                     searchResponse.courses.forEach { self.updateTrie(with: $0) }
-                    PersistenceController.shared.persist(searchResponse.courses, synchronous: true) { [weak self] errors in
-                        guard let self else { return }
-                        self.displayError(from: errors)
+                    PersistenceController.shared.persist(searchResponse.courses, synchronous: true) { errors in
+                        // We don't need to alert the user of caching errors.
+                        print(errors)
                     }
                     let mergedResult = merge(suggestions, with: searchResponse.courses.map { $0.id })
                     updateCollection(with: mergedResult)
                 case .failure(let error):
-                    displayError(from: [error])
+                    if comprehensive {
+                        // We don't need to show an error when we are optionally
+                        // showing suggestions.
+                        displayError(from: [error])
+                    }
+                    print(error)
                 }
                 completion()
             }

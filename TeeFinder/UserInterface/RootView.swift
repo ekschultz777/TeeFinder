@@ -55,10 +55,10 @@ struct ContentView: View {
                     }
                     CourseListView(viewModel: viewModel)
                 }
-                if let _ = viewModel.error {
-//                    ErrorView(title: "Error", message: "Something went wrong") {
-//                        viewModel.clearError()
-//                    }
+                if let error = viewModel.error {
+                    ErrorView(title: "Error", message: "\(error.localizedDescription)") {
+                        viewModel.clearError()
+                    }
                 }
             }
             .onChange(of: viewModel.syncing) {

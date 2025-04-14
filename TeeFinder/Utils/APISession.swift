@@ -9,7 +9,7 @@ import Foundation
 
 /// A session responsible for handling course search and lookup requests using GolfCourseAPI.
 class APISession {
-    static let shared = APISession(apiKey: "QWRBJBHA5NSULIE473NTLUDZ2A")
+    static let shared = APISession(apiKey: "22FA7ADBN3NGJB5VNCYYPITCSI")
     
     private let scheme = "https"
     private let host = "api.golfcourseapi.com"
@@ -105,7 +105,6 @@ class APISession {
                 semaphore.wait()
                 URLSession.shared.dataTask(with: request) { data, response, error in
                     semaphore.signal()
-                    print("Syncing page \(page)")
                     do {
                         guard let data else { throw error ?? URLError(.badServerResponse) }
                         let json = try JSONDecoder().decode(CourseSearchResponse.self, from: data)

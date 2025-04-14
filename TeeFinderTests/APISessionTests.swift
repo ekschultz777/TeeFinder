@@ -8,7 +8,7 @@
 import XCTest
 @testable import TeeFinder
 
-final class CourseSearchSessionTests: XCTestCase {
+final class APISessionTests: XCTestCase {
     var session: APISession!
 
     override func setUpWithError() throws {

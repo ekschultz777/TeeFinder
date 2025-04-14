@@ -34,7 +34,7 @@
 		D5D662312DAD27DF00B0FB4D /* Course+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D6622F2DAD27DF00B0FB4D /* Course+CoreDataClass.swift */; };
 		D5D662322DAD27DF00B0FB4D /* Course+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D662302DAD27DF00B0FB4D /* Course+CoreDataProperties.swift */; };
 		D5D662342DAD360B00B0FB4D /* TrieTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D662332DAD360B00B0FB4D /* TrieTests.swift */; };
-		D5D662362DAD370C00B0FB4D /* CourseSearchSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D662352DAD370C00B0FB4D /* CourseSearchSessionTests.swift */; };
+		D5D662362DAD370C00B0FB4D /* APISessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D662352DAD370C00B0FB4D /* APISessionTests.swift */; };
 		D5DE8F572DAC6C63009F7DC8 /* CourseSearchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DE8F562DAC6C63009F7DC8 /* CourseSearchResponse.swift */; };
 		D5DE8F592DAC958D009F7DC8 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DE8F582DAC958D009F7DC8 /* AppColor.swift */; };
 /* End PBXBuildFile section */
@@ -87,7 +87,7 @@
 		D5D6622F2DAD27DF00B0FB4D /* Course+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Course+CoreDataClass.swift"; sourceTree = "<group>"; };
 		D5D662302DAD27DF00B0FB4D /* Course+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Course+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		D5D662332DAD360B00B0FB4D /* TrieTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrieTests.swift; sourceTree = "<group>"; };
-		D5D662352DAD370C00B0FB4D /* CourseSearchSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseSearchSessionTests.swift; sourceTree = "<group>"; };
+		D5D662352DAD370C00B0FB4D /* APISessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APISessionTests.swift; sourceTree = "<group>"; };
 		D5DE8F562DAC6C63009F7DC8 /* CourseSearchResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseSearchResponse.swift; sourceTree = "<group>"; };
 		D5DE8F582DAC958D009F7DC8 /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -173,7 +173,7 @@
 			isa = PBXGroup;
 			children = (
 				D5D662332DAD360B00B0FB4D /* TrieTests.swift */,
-				D5D662352DAD370C00B0FB4D /* CourseSearchSessionTests.swift */,
+				D5D662352DAD370C00B0FB4D /* APISessionTests.swift */,
 				D582BB282DADA3F70055037E /* RootViewModelTests.swift */,
 			);
 			path = TeeFinderTests;
@@ -191,6 +191,7 @@
 		D5B482CF2DACBAEE000D34A6 /* CourseList */ = {
 			isa = PBXGroup;
 			children = (
+				D5B482D22DACBB70000D34A6 /* CourseListItem */,
 				D5BC7A652DAA1EEB00F38C3B /* CourseListView.swift */,
 				D5B482E02DACC72F000D34A6 /* CourseListViewModel.swift */,
 			);
@@ -200,6 +201,7 @@
 		D5B482D22DACBB70000D34A6 /* CourseListItem */ = {
 			isa = PBXGroup;
 			children = (
+				D5B482D42DACBBAA000D34A6 /* CourseDetail */,
 				D5B482D02DACBB27000D34A6 /* CourseListItemView.swift */,
 				D5B482DE2DACC43F000D34A6 /* CourseListItemViewModel.swift */,
 			);
@@ -241,8 +243,6 @@
 				D5DE8F582DAC958D009F7DC8 /* AppColor.swift */,
 				D5DE8F552DAC61B3009F7DC8 /* Model */,
 				D5B482CF2DACBAEE000D34A6 /* CourseList */,
-				D5B482D22DACBB70000D34A6 /* CourseListItem */,
-				D5B482D42DACBBAA000D34A6 /* CourseDetail */,
 				D55A42272DA9B28B00D4B461 /* RootViewModel.swift */,
 				D5A541012DA844B0004514F7 /* RootView.swift */,
 				D5BC7A672DAA23C000F38C3B /* AutocompleteTextField.swift */,
@@ -420,7 +420,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D5D662362DAD370C00B0FB4D /* CourseSearchSessionTests.swift in Sources */,
+				D5D662362DAD370C00B0FB4D /* APISessionTests.swift in Sources */,
 				D582BB292DADA3F70055037E /* RootViewModelTests.swift in Sources */,
 				D5D662342DAD360B00B0FB4D /* TrieTests.swift in Sources */,
 			);

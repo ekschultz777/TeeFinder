@@ -17,7 +17,7 @@ struct ErrorView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .foregroundStyle(AppColor.tertiaryForegroundColor)
-                .frame(maxWidth: .infinity, maxHeight: 250)
+                .frame(maxWidth: .infinity, maxHeight: 300)
             VStack(spacing: 16) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .resizable()
@@ -45,7 +45,7 @@ struct ErrorView: View {
                     .padding()
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: 250)
+            .frame(maxWidth: .infinity, maxHeight: 300)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
