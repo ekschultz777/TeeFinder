@@ -10,9 +10,6 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @StateObject var viewModel = RootViewModel()
-        
-//    @State private var searchQuery: String = ""
-//    @State private var searchSuggestion: String = ""
     @State private var comprehensiveSearch = false
 
     var body: some View {
@@ -26,9 +23,7 @@ struct ContentView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: 50, maxHeight: 50)
                         .padding()
-                    AutocompleteTextField(searchQuery: $viewModel.searchQuery,
-                                          searchSuggestion: $viewModel.searchSuggestion,
-                                          suggest: { assert(!Thread.isMainThread); return viewModel.autocomplete($0) },
+                    AutocompleteTextField(viewModel: viewModel,
                                           onChange: { search($0, comprehensive: false) },
                                           onSubmit: { search($0, comprehensive: true) })
                     Spacer()
@@ -78,38 +73,12 @@ struct ContentView: View {
         }
     }
     
+    /// Convenience method of searching the database and setting comprehensiveSearch.
     private func search(_ query: String, comprehensive: Bool) {
         withAnimation {
             comprehensiveSearch = comprehensive
         }
-        if comprehensive { viewModel.searchSuggestion = "" }
-        debounce(for: 0.25) {
-            viewModel.search(query, comprehensive: comprehensive) {
-                guard !comprehensive else { return }
-                // Check that the suggestion still matches the current searchQuery
-                DispatchQueue.global(qos: .userInitiated).async {
-                    assert(!Thread.isMainThread)
-                    // Ensure we aren't using autocomplete on the main thread.
-                    let suggestion = viewModel.autocomplete(viewModel.searchQuery)
-                    DispatchQueue.main.async {
-                        if suggestion.hasPrefix(viewModel.searchQuery) {
-                            viewModel.searchSuggestion = suggestion
-                        } else {
-                            // Clear autocomplete if the suggestion is no longer valid
-                            viewModel.searchSuggestion = ""
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    // MARK: Debounce
-    @State private var debounceWork: DispatchWorkItem? = nil
-    private func debounce(for time: TimeInterval, _ closure: @escaping () -> Void) {
-        debounceWork?.cancel()
-        debounceWork = DispatchWorkItem { closure() }
-        DispatchQueue.main.asyncAfter(deadline: .now() + time, execute: debounceWork!)
+        viewModel.search(query, comprehensive: comprehensive)
     }
 }
 

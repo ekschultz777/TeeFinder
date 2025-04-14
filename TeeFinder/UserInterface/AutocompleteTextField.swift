@@ -8,57 +8,35 @@
 import Foundation
 import SwiftUI
 
-struct AutocompleteTextField: View {
-    @Binding var searchQuery: String
-    @Binding var searchSuggestion: String
-    public var suggest: (String) -> String
+struct AutocompleteTextField<T: AutocompleteViewModel>: View {
+    @StateObject var viewModel: T
     public var onChange: (String) -> Void
     public var onSubmit: (String) -> Void
     
     var body: some View {
         ZStack {
-            // Autocomplete text field
-            TextField("", text: $searchSuggestion)
+            TextField("", text: $viewModel.searchSuggestion)
                 .foregroundColor(AppColor.quaternaryForegroundColor)
                 .padding()
-                .onChange(of: searchQuery) {
-                    if searchQuery == "" {
-                        self.searchSuggestion = ""
-                        return
-                    }
-                    // FIXME: Do this logic in the view model rather than in the view
-                    // Run suggestion lookup on a background queue, it will block the thread it is run on.
-                    DispatchQueue.global(qos: .userInitiated).async {
-                        let suggestion = suggest(searchQuery)
-                        // Update UI on the main thread
-                        DispatchQueue.main.async {
-                            // Check that the suggestion still matches the current searchQuery
-                            if suggestion.hasPrefix(searchQuery) {
-                                self.searchSuggestion = suggestion
-                            } else {
-                                // Clear the suggestion it if it's no longer valid
-                                self.searchSuggestion = ""
-                            }
-
-                        }
-                    }
+                .onChange(of: viewModel.searchQuery) {
+                    viewModel.suggestAutocompletion()
                 }
                 .onSubmit {
-                    searchSuggestion = ""
+                    viewModel.searchSuggestion = ""
                 }
                 .allowsHitTesting(false)
             TextField(
                 "",
-                text: $searchQuery,
+                text: $viewModel.searchQuery,
                 prompt: Text("Search Courses").foregroundColor(AppColor.quaternaryForegroundColor)
             )
             .foregroundColor(AppColor.primaryForegroundColor)
             .padding()
-            .onChange(of: searchQuery) { _,_ in
-                onChange(searchQuery)
+            .onChange(of: viewModel.searchQuery) { _,_ in
+                onChange(viewModel.searchQuery)
             }
             .onSubmit {
-                onSubmit(searchQuery)
+                onSubmit(viewModel.searchQuery)
             }
         }
     }

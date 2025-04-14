@@ -15,9 +15,8 @@ class RootViewModel: ObservableObject, CourseListViewModel {
     @Published private(set) var items: [CourseModel] = []
     @Published private(set) var syncing: Bool
     @Published private(set) var error: Error?
-    
-    @Published /*private(set)*/ var searchQuery: String = ""
-    @Published /*private(set)*/ var searchSuggestion: String = ""
+    @Published var searchQuery: String = ""
+    @Published var searchSuggestion: String = ""
     
     init() {
         syncing = true
@@ -48,6 +47,17 @@ class RootViewModel: ObservableObject, CourseListViewModel {
             guard let self else { return }
             syncing = false
         })
+    }
+    
+    @Published private var debounceWork: DispatchWorkItem? = nil
+    /// Simple debounce function.
+    /// - Parameters:
+    ///   - time: the amount of time to debounce for.
+    ///   - closure: The work that should execute once the debouncer deems it valid to perform work.
+    private func debounce(for time: TimeInterval, _ closure: @escaping () -> Void) {
+        debounceWork?.cancel()
+        debounceWork = DispatchWorkItem { closure() }
+        DispatchQueue.main.asyncAfter(deadline: .now() + time, execute: debounceWork!)
     }
     
     /// A convenience method to throw an error from the main thread.
@@ -112,13 +122,7 @@ class RootViewModel: ObservableObject, CourseListViewModel {
         }
     }
     
-    /// A function that searches for courses matching the course name and club name.
-    /// The currently used API has no documented way to search by location.
-    /// - Parameters:
-    ///   - query: The query by which to search.
-    ///   - isValid: A check to ensure the current search is still valid after checking the trie.
-    ///   - completion: A completion handler that will run once the search is complete.
-    public func search(_ query: String, comprehensive: Bool, completion: @escaping () -> Void) {
+    private func _search(_ query: String, comprehensive: Bool, completion: @escaping () -> Void) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
             // If we have an empty query, then we will update the search results with nothing.
@@ -174,6 +178,36 @@ class RootViewModel: ObservableObject, CourseListViewModel {
         }
     }
     
+    /// A function that searches for courses matching the course name and club name.
+    /// The currently used API has no documented way to search by location.
+    /// - Parameters:
+    ///   - query: The query by which to search.
+    ///   - isValid: A check to ensure the current search is still valid after checking the trie.
+    ///   - completion: A completion handler that will run once the search is complete.
+    public func search(_ query: String, comprehensive: Bool) {
+        if comprehensive { searchSuggestion = "" }
+        debounce(for: 0.25) { [weak self] in
+            guard let self else { return }
+            _search(query, comprehensive: comprehensive) { [weak self] in
+                guard let self, !comprehensive else { return }
+                // Check that the suggestion still matches the current searchQuery
+                DispatchQueue.global(qos: .userInitiated).async {
+                    assert(!Thread.isMainThread)
+                    // Ensure we aren't using autocomplete on the main thread.
+                    let suggestion = self.autocomplete(self.searchQuery)
+                    DispatchQueue.main.async {
+                        if suggestion.hasPrefix(self.searchQuery) {
+                            self.searchSuggestion = suggestion
+                        } else {
+                            // Clear autocomplete if the suggestion is no longer valid
+                            self.searchSuggestion = ""
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     /// Merges two arrays of hashable values using their hashes.
     ///
     /// This method has both a space and time complexity of O(n) where n is the count of items or other, whichever is larger.
@@ -191,8 +225,35 @@ class RootViewModel: ObservableObject, CourseListViewModel {
         }
         return Array(hashMap.values)
     }
-    
+        
     public func autocomplete(_ prefix: String) -> String {
         return searchTrie.autocomplete(prefix) ?? ""
     }
+}
+
+extension RootViewModel: AutocompleteViewModel {
+    /// Suggests an autocompletion to the text field this is supplied to.
+    public func suggestAutocompletion() {
+        if searchQuery == "" {
+            searchSuggestion = ""
+            return
+        }
+        // Run suggestion lookup on a background queue, it will block the thread it is run on.
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self else { return }
+            let suggestion = autocomplete(searchQuery)
+            // Update UI on the main thread
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                // Check that the suggestion still matches the current searchQuery
+                if suggestion.hasPrefix(searchQuery) {
+                    searchSuggestion = suggestion
+                } else {
+                    // Clear the suggestion it if it's no longer valid
+                    searchSuggestion = ""
+                }
+            }
+        }
+    }
+
 }

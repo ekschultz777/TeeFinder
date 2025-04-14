@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		D55A42282DA9B28B00D4B461 /* RootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55A42272DA9B28B00D4B461 /* RootViewModel.swift */; };
 		D582BB292DADA3F70055037E /* RootViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D582BB282DADA3F70055037E /* RootViewModelTests.swift */; };
+		D582BB2B2DADC0790055037E /* AutocompleteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D582BB2A2DADC0790055037E /* AutocompleteViewModel.swift */; };
 		D5A541002DA844B0004514F7 /* TeeFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A540FF2DA844B0004514F7 /* TeeFinderApp.swift */; };
 		D5A541022DA844B0004514F7 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A541012DA844B0004514F7 /* RootView.swift */; };
 		D5A541042DA844B3004514F7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5A541032DA844B3004514F7 /* Assets.xcassets */; };
@@ -59,6 +60,7 @@
 /* Begin PBXFileReference section */
 		D55A42272DA9B28B00D4B461 /* RootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewModel.swift; sourceTree = "<group>"; };
 		D582BB282DADA3F70055037E /* RootViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewModelTests.swift; sourceTree = "<group>"; };
+		D582BB2A2DADC0790055037E /* AutocompleteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutocompleteViewModel.swift; sourceTree = "<group>"; };
 		D5A540FC2DA844B0004514F7 /* TeeFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeeFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5A540FF2DA844B0004514F7 /* TeeFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeeFinderApp.swift; sourceTree = "<group>"; };
 		D5A541012DA844B0004514F7 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -246,6 +248,7 @@
 				D55A42272DA9B28B00D4B461 /* RootViewModel.swift */,
 				D5A541012DA844B0004514F7 /* RootView.swift */,
 				D5BC7A672DAA23C000F38C3B /* AutocompleteTextField.swift */,
+				D582BB2A2DADC0790055037E /* AutocompleteViewModel.swift */,
 				D5D6622D2DACE16100B0FB4D /* ErrorView.swift */,
 			);
 			path = UserInterface;
@@ -394,6 +397,7 @@
 				D5D662312DAD27DF00B0FB4D /* Course+CoreDataClass.swift in Sources */,
 				D5D662322DAD27DF00B0FB4D /* Course+CoreDataProperties.swift in Sources */,
 				D5B482D62DACBBB7000D34A6 /* CourseDetailView.swift in Sources */,
+				D582BB2B2DADC0790055037E /* AutocompleteViewModel.swift in Sources */,
 				D5B482D12DACBB27000D34A6 /* CourseListItemView.swift in Sources */,
 				D5A5410C2DA844B3004514F7 /* TeeFinder.xcdatamodeld in Sources */,
 				D55A42282DA9B28B00D4B461 /* RootViewModel.swift in Sources */,
