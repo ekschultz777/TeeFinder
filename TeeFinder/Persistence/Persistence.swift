@@ -52,7 +52,6 @@ extension PersistenceController {
     ///   - completion: An optional completion handler to which all errors that occurred during processing will be passed.
     private func _persist(_ items: [CourseModel], in context: NSManagedObjectContext, completion: (([Error]) -> Void)?) {
         var errors: [Error] = []
-        
         let request: NSFetchRequest<Course> = Course.fetchRequest()
         request.predicate = NSPredicate(format: "\(#keyPath(Course.apiId)) IN %@", NSArray(array: items.map { Int32($0.id) }))
         do {
@@ -141,8 +140,8 @@ extension PersistenceController {
             ])
             
             do {
-                let results = try backgroundContext.fetch(fetchRequest)
-                return .success(results.compactMap { try? JSONDecoder().decode(CourseModel.self, from: $0.data) })
+                let results = try backgroundContext.fetch(fetchRequest).compactMap { try? JSONDecoder().decode(CourseModel.self, from: $0.data) }
+                return .success(results)
             } catch {
                 return .failure(error)
             }

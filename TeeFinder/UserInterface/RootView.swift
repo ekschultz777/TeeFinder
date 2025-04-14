@@ -11,8 +11,8 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @StateObject var viewModel = RootViewModel()
         
-    @State private var searchQuery: String = ""
-    @State private var searchSuggestion: String = ""
+//    @State private var searchQuery: String = ""
+//    @State private var searchSuggestion: String = ""
     @State private var comprehensiveSearch = false
 
     var body: some View {
@@ -26,8 +26,8 @@ struct ContentView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: 50, maxHeight: 50)
                         .padding()
-                    AutocompleteTextField(searchQuery: $searchQuery,
-                                          searchSuggestion: $searchSuggestion,
+                    AutocompleteTextField(searchQuery: $viewModel.searchQuery,
+                                          searchSuggestion: $viewModel.searchSuggestion,
                                           suggest: { viewModel.autocomplete($0) },
                                           onChange: { search($0, comprehensive: false) },
                                           onSubmit: { search($0, comprehensive: true) })
@@ -37,6 +37,21 @@ struct ContentView: View {
                             .tint(AppColor.tertiaryForegroundColor) // bright color
                             .scaleEffect(1.5)
                             .padding()
+                    } else if comprehensiveSearch {
+                        ProgressView()
+                            .tint(AppColor.tertiaryForegroundColor) // bright color
+                            .scaleEffect(1.5)
+                            .padding()
+                            .onAppear {
+                                // Optionally, for aesthetic, we can show a progress indicator to
+                                // show that the user's request was noted.
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    guard !viewModel.syncing else { return }
+                                    withAnimation {
+                                        comprehensiveSearch = false
+                                    }
+                                }
+                            }
                     }
                     CourseListView(viewModel: viewModel)
                 }
@@ -67,11 +82,22 @@ struct ContentView: View {
         withAnimation {
             comprehensiveSearch = comprehensive
         }
-        if comprehensive { searchSuggestion = "" }
+        if comprehensive { viewModel.searchSuggestion = "" }
         debounce(for: 0.25) {
-            viewModel.search(query) { suggestions in
+            viewModel.search(query, comprehensive: comprehensive) {
                 guard !comprehensive else { return }
-                searchSuggestion = viewModel.autocomplete(searchQuery)
+                // Check that the suggestion still matches the current searchQuery
+                DispatchQueue.global(qos: .userInitiated).async {
+                    let suggestion = viewModel.autocomplete(viewModel.searchQuery)
+                    DispatchQueue.main.async {
+                        if suggestion.hasPrefix(viewModel.searchQuery) {
+                            viewModel.searchSuggestion = suggestion
+                        } else {
+                            // Clear autocomplete if the suggestion is no longer valid
+                            viewModel.searchSuggestion = ""
+                        }
+                    }
+                }
             }
         }
     }

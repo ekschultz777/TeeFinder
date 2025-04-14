@@ -8,8 +8,8 @@
 import Foundation
 
 /// A session responsible for handling course search and lookup requests using GolfCourseAPI.
-class CourseSearchSession {
-    static let shared = CourseSearchSession(apiKey: "NIE76CBDXKIHPGRU6T4E6G542E")
+class APISession {
+    static let shared = APISession(apiKey: "QWRBJBHA5NSULIE473NTLUDZ2A")
     
     private let scheme = "https"
     private let host = "api.golfcourseapi.com"
@@ -74,6 +74,7 @@ class CourseSearchSession {
                 let json = try JSONDecoder().decode(CourseSearchResponse.self, from: data)
                 completion(.success(json))
             } catch {
+                Self.debugPrint(data)
                 completion(.failure(error))
             }
         }.resume()
@@ -92,13 +93,11 @@ class CourseSearchSession {
     ) {
         DispatchQueue.global().async { [weak self] in
             guard let self else { return }
-
             let pages = 257 // Total pages to iterate
             let group = DispatchGroup()
             let maxConcurrentOperations = 1
             let semaphore = DispatchSemaphore(value: maxConcurrentOperations)
             let startPage = UserDefaults.standard.lastSavedPage ?? 1
-
             for page in startPage...pages {
                 guard let url = coursesURL(page: page) else { continue }
                 let request = request(for: url)
@@ -113,6 +112,7 @@ class CourseSearchSession {
                         UserDefaults.standard.lastSavedPage = page
                         iteration(.success(json.courses))
                     } catch {
+                        Self.debugPrint(data)
                         iteration(.failure(error))
                     }
                     group.leave()
@@ -124,14 +124,9 @@ class CourseSearchSession {
             }
         }
     }
-}
-
-extension UserDefaults {
-    var lastSavedPage: Int? {
-        get {
-            UserDefaults.standard.value(forKey: "lastSavedPage") as? Int
-        } set {
-            UserDefaults.standard.setValue(newValue, forKey: "lastSavedPage")
-        }
+    
+    private static func debugPrint(_ data: Data?) {
+        guard let data, let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else { return }
+        print(json)
     }
 }

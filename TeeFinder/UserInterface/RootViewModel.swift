@@ -15,6 +15,9 @@ class RootViewModel: ObservableObject, CourseListViewModel {
     @Published private(set) var syncing: Bool
     @Published private(set) var error: Error?
     
+    @Published /*private(set)*/ var searchQuery: String = ""
+    @Published /*private(set)*/ var searchSuggestion: String = ""
+    
     init() {
         syncing = true
         commonInit()
@@ -23,7 +26,7 @@ class RootViewModel: ObservableObject, CourseListViewModel {
     private func commonInit() {
         // Sync to the API on launch. This function will only sync pages that have
         // not already been synced.
-        CourseSearchSession.shared.iterateCourses(iteration: { [weak self] result in
+        APISession.shared.iterateCourses(iteration: { [weak self] result in
             switch result {
             case .success(let courses):
                 // Update or create a new NSManagedObject
@@ -90,7 +93,9 @@ class RootViewModel: ObservableObject, CourseListViewModel {
             case let .remove(offset, _, _):
                 updatedItems.remove(at: offset)
             case let .insert(offset, element, _):
-                updatedItems.insert(element, at: offset)
+                // Prevent us from inserting out of range
+                let index = min(offset, updatedItems.count)
+                updatedItems.insert(element, at: index)
             }
         }
         DispatchQueue.main.async { [weak self] in
@@ -100,59 +105,83 @@ class RootViewModel: ObservableObject, CourseListViewModel {
             }
         }
     }
-    
+        
     /// A function that searches for courses matching the course name and club name.
     /// The currently used API has no documented way to search by location.
     /// - Parameters:
     ///   - query: The query by which to search.
     ///   - isValid: A check to ensure the current search is still valid after checking the trie.
     ///   - completion: A completion handler that will run once the search is complete.
-    public func search(_ query: String, completion: @escaping ([CourseID]) -> Void) {
-        // If we have an empty query, then we will update the search results with nothing.
-        if query.isEmpty {
-            self.updateCollection(with: [])
-            return
-        }
-        // If we have already searched this or loaded our cache here, then we have
-        // no need check update further.
-        let suggestions = searchTrie.suggestions(query)
-        if !suggestions.isEmpty {
-            updateCollection(with: suggestions)
-            completion(suggestions)
-            return
-        }
-        
-        // Fetch items with prefix query. If we get results back, we can
-        // Still proceed with the API call.
-        let result = PersistenceController.shared.fetchItems(withPrefix: query)
-        switch result {
-        case .success(let courses):
-            updateCollection(with: courses.map { $0.id })
-            courses.forEach { updateTrie(with: $0) }
-        default:
-            break
-        }
-
-        // If we don't have any cache in the trie or Core Data,
-        // then use the API to get results.
-        CourseSearchSession.shared.search(query) { [weak self] response in
+    public func search(_ query: String, comprehensive: Bool, completion: @escaping () -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
-            switch response {
-            case .success(let searchResponse):
-                searchResponse.courses.forEach { self.updateTrie(with: $0) }
-                PersistenceController.shared.persist(searchResponse.courses, synchronous: true) { [weak self] errors in
-                    guard let self else { return }
-                    self.displayError(from: errors)
-                }
-                updateCollection(with: searchResponse.courses.map { $0.id })
-            case .failure(let error):
-                displayError(from: [error])
+            // If we have an empty query, then we will update the search results with nothing.
+            if query.isEmpty {
+                self.updateCollection(with: [])
+                return
             }
-            completion(suggestions)
+            // Trie.suggestions() is synchronous and we don't want to block the main thread.
+            // Ensure this is called on a background thread.
+            assert(!Thread.isMainThread)
+            let suggestions = searchTrie.suggestions(query)
+            if !suggestions.isEmpty && !comprehensive {
+                updateCollection(with: suggestions)
+                completion()
+                return
+            }
+                        
+            // Fetch items with prefix query. If we get results back, we can
+            // Still proceed with the API call.
+            let result = PersistenceController.shared.fetchItems(withPrefix: query)
+            switch result {
+            case .success(let courses):
+                updateCollection(with: courses.map { $0.id })
+                courses.forEach { self.updateTrie(with: $0) }
+            default:
+                break
+            }
+            
+            // If we don't have any cache in the trie or Core Data,
+            // then use the API to get results.
+            APISession.shared.search(query) { [weak self] response in
+                guard let self else { return }
+                switch response {
+                case .success(let searchResponse):
+                    searchResponse.courses.forEach { self.updateTrie(with: $0) }
+                    PersistenceController.shared.persist(searchResponse.courses, synchronous: true) { [weak self] errors in
+                        guard let self else { return }
+                        self.displayError(from: errors)
+                    }
+                    let mergedResult = merge(suggestions, with: searchResponse.courses.map { $0.id })
+                    updateCollection(with: mergedResult)
+                case .failure(let error):
+                    displayError(from: [error])
+                }
+                completion()
+            }
         }
     }
     
+    /// Merges two arrays of hashable values using their hashes.
+    ///
+    /// This method has both a space and time complexity of O(n) where n is the count of items or other, whichever is larger.
+    /// - Parameters:
+    ///   - items: An array to merge.
+    ///   - other: The array to consume into the first array.
+    /// - Returns: The merged array.
+    private func merge<T: Hashable>(_ items: [T], with other: consuming [T]) -> [T] {
+        var hashMap: [Int: T] = [:]
+        for item in items {
+            hashMap[item.hashValue] = item
+        }
+        for item in other {
+            hashMap[item.hashValue] = item
+        }
+        return Array(hashMap.values)
+    }
+    
     public func autocomplete(_ prefix: String) -> String {
-        self.searchTrie.autocomplete(prefix) ?? ""
+        assert(!Thread.isMainThread)
+        return searchTrie.autocomplete(prefix) ?? ""
     }
 }

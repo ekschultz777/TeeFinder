@@ -38,8 +38,10 @@ public class Trie<Object> {
     /// The root node of the trie. Unused other than to begin search..
     private let head = TrieNode<Object>(value: "*")
 
-    /// A serial dispatch queue to ensure thread-safe access.
-    private let queue = DispatchQueue(label: "com.TeeFinder.Trie")
+    /// A concurrent dispatch queue to ensure thread-safe access.
+    ///
+    /// When writing, ensure that the .barrier flag is used to prevent reading and writting at the same time.
+    private let queue = DispatchQueue(label: "com.TeeFinder.Trie", attributes: .concurrent)
 }
 
 public extension Trie {
@@ -48,7 +50,8 @@ public extension Trie {
     ///   - key: The string key to insert.
     ///   - value: The value to associate with the key.
     func insert(key: String, value: Object) {
-        queue.async { [unowned self] in
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self else { return }
             var current = head
             for char in key {
                 if let node = current.children[char] {
@@ -67,7 +70,8 @@ public extension Trie {
     /// - Parameter key: The key to look up.
     /// - Returns: The associated value if the key exists, or nil.
     func get(key: String) -> Object? {
-        queue.sync {
+        assert(!Thread.isMainThread)
+        return queue.sync {
             var current = head
             for char in key {
                 guard let node = current.children[char] else { return nil }
@@ -80,7 +84,8 @@ public extension Trie {
     /// Removes the value associated with a given key from the trie.
     /// - Parameter key: The key to remove.
     func remove(key: String) {
-        queue.async { [unowned self] in
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self else { return }
             var current = head
             for char in key {
                 if let node = current.children[char] {
@@ -96,10 +101,12 @@ public extension Trie {
     }
 
     /// Attempts to find the first complete word in the trie that starts with the given prefix.
+    ///
+    /// This is a synchronous call and may block the calling thread.
     /// - Parameter prefix: The prefix to search for.
     /// - Returns: A string representing the first autocompleted word, or nil if none found.
     func autocomplete(_ prefix: String) -> String? {
-        queue.sync { [unowned self] in
+        return queue.sync {
             var current = head
             for char in prefix {
                 guard let node = current.children[char] else { return nil }
@@ -121,10 +128,12 @@ public extension Trie {
     }
 
     /// Retrieves all values whose keys start with the given prefix.
+    ///
+    /// This is a synchronous call and may block the calling thread.
     /// - Parameter prefix: The prefix to search for.
     /// - Returns: An array of values whose prefix matches the given prefix.
     func suggestions(_ prefix: String) -> [Object] {
-        queue.sync { [unowned self] in
+        return queue.sync {
             var current = head
             for char in prefix {
                 guard let node = current.children[char] else { return [] }

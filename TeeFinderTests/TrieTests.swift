@@ -20,6 +20,15 @@ final class TrieTests: XCTestCase {
         trie = nil
         super.tearDown()
     }
+    
+    func testPerformamce() {
+        self.measure {
+            for _ in 0..<1000 {
+                let string = "\(UUID())"
+                trie.insert(key: string, value: "BlueTees")
+            }
+        }
+    }
 
     /// Test inserting and retrieving a key
     func testInsertAndGet() {

@@ -9,11 +9,11 @@ import XCTest
 @testable import TeeFinder
 
 final class CourseSearchSessionTests: XCTestCase {
-    var session: CourseSearchSession!
+    var session: APISession!
 
     override func setUpWithError() throws {
         super.setUp()
-        session = CourseSearchSession(apiKey: "API_KEY")
+        session = APISession(apiKey: "API_KEY")
     }
 
     override func tearDownWithError() throws {
