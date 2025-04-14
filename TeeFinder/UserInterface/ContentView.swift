@@ -11,7 +11,7 @@ import CoreData
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @StateObject var viewModel = ContentViewModel()
-    
+        
     @State private var searchQuery: String = ""
     @State private var searchSuggestion: String = ""
 
@@ -27,12 +27,12 @@ struct ContentView: View {
                                       searchSuggestion: $searchSuggestion,
                                       suggest: { viewModel.autocomplete($0) },
                                       onChange: { search($0) },
-                                      onSubmit: { search($0) })
+                                      onSubmit: { completeSearch($0) })
                 Spacer()
                 CourseListView(viewModel: viewModel)
             }
             .background {
-                Color.black.opacity(0.9)
+                Color.black
                     .ignoresSafeArea()
             }
         }
@@ -47,6 +47,16 @@ struct ContentView: View {
             viewModel.search(query) { suggestions in
                 searchSuggestion = viewModel.autocomplete(searchQuery)
             }
+        }
+    }
+    
+    private func completeSearch(_ query: String) {
+        debounce(for: 0.25) {
+            guard !query.isEmpty else {
+                self.viewModel.updateList(with: [])
+                return
+            }
+            viewModel.completeSearch(query)
         }
     }
     

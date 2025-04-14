@@ -24,6 +24,8 @@
 		D5BC7A682DAA23C000F38C3B /* AutocompleteTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BC7A672DAA23C000F38C3B /* AutocompleteTextField.swift */; };
 		D5BC7A732DAA43DF00F38C3B /* CourseMO+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BC7A712DAA43DF00F38C3B /* CourseMO+CoreDataClass.swift */; };
 		D5BC7A742DAA43DF00F38C3B /* CourseMO+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BC7A722DAA43DF00F38C3B /* CourseMO+CoreDataProperties.swift */; };
+		D5DE8F572DAC6C63009F7DC8 /* CourseSearchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DE8F562DAC6C63009F7DC8 /* CourseSearchResponse.swift */; };
+		D5DE8F592DAC958D009F7DC8 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DE8F582DAC958D009F7DC8 /* AppColor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +66,8 @@
 		D5BC7A672DAA23C000F38C3B /* AutocompleteTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutocompleteTextField.swift; sourceTree = "<group>"; };
 		D5BC7A712DAA43DF00F38C3B /* CourseMO+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CourseMO+CoreDataClass.swift"; sourceTree = "<group>"; };
 		D5BC7A722DAA43DF00F38C3B /* CourseMO+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CourseMO+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		D5DE8F562DAC6C63009F7DC8 /* CourseSearchResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseSearchResponse.swift; sourceTree = "<group>"; };
+		D5DE8F582DAC958D009F7DC8 /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,11 +127,10 @@
 		D5A540FE2DA844B0004514F7 /* TeeFinder */ = {
 			isa = PBXGroup;
 			children = (
-				D5BC7A642DAA1ED400F38C3B /* ViewComponents */,
+				D5BC7A642DAA1ED400F38C3B /* UserInterface */,
 				D55A42292DAA164200D4B461 /* Utils */,
-				D5B5366B2DA8C7EC00778AE3 /* CoreData */,
+				D5B5366B2DA8C7EC00778AE3 /* Persistence */,
 				D5A540FF2DA844B0004514F7 /* TeeFinderApp.swift */,
-				D5A541082DA844B3004514F7 /* Persistence.swift */,
 				D5A541032DA844B3004514F7 /* Assets.xcassets */,
 				D5A5410A2DA844B3004514F7 /* TeeFinder.xcdatamodeld */,
 				D5A541052DA844B3004514F7 /* Preview Content */,
@@ -160,25 +163,36 @@
 			path = TeeFinderUITests;
 			sourceTree = "<group>";
 		};
-		D5B5366B2DA8C7EC00778AE3 /* CoreData */ = {
+		D5B5366B2DA8C7EC00778AE3 /* Persistence */ = {
 			isa = PBXGroup;
 			children = (
+				D5A541082DA844B3004514F7 /* Persistence.swift */,
 				D5BC7A712DAA43DF00F38C3B /* CourseMO+CoreDataClass.swift */,
 				D5BC7A722DAA43DF00F38C3B /* CourseMO+CoreDataProperties.swift */,
 			);
-			path = CoreData;
+			path = Persistence;
 			sourceTree = "<group>";
 		};
-		D5BC7A642DAA1ED400F38C3B /* ViewComponents */ = {
+		D5BC7A642DAA1ED400F38C3B /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
-				D5A541362DA864A1004514F7 /* CourseModel.swift */,
+				D5DE8F582DAC958D009F7DC8 /* AppColor.swift */,
+				D5DE8F552DAC61B3009F7DC8 /* Model */,
 				D5BC7A652DAA1EEB00F38C3B /* CourseListView.swift */,
 				D55A42272DA9B28B00D4B461 /* ContentViewModel.swift */,
 				D5A541012DA844B0004514F7 /* ContentView.swift */,
 				D5BC7A672DAA23C000F38C3B /* AutocompleteTextField.swift */,
 			);
-			path = ViewComponents;
+			path = UserInterface;
+			sourceTree = "<group>";
+		};
+		D5DE8F552DAC61B3009F7DC8 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D5A541362DA864A1004514F7 /* CourseModel.swift */,
+				D5DE8F562DAC6C63009F7DC8 /* CourseSearchResponse.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -314,12 +328,14 @@
 				D5A5410C2DA844B3004514F7 /* TeeFinder.xcdatamodeld in Sources */,
 				D55A42282DA9B28B00D4B461 /* ContentViewModel.swift in Sources */,
 				D5A541372DA864A1004514F7 /* CourseModel.swift in Sources */,
+				D5DE8F592DAC958D009F7DC8 /* AppColor.swift in Sources */,
 				D5B5366A2DA8C3EE00778AE3 /* Trie.swift in Sources */,
 				D5A541092DA844B3004514F7 /* Persistence.swift in Sources */,
 				D5BC7A732DAA43DF00F38C3B /* CourseMO+CoreDataClass.swift in Sources */,
 				D5BC7A742DAA43DF00F38C3B /* CourseMO+CoreDataProperties.swift in Sources */,
 				D5A541022DA844B0004514F7 /* ContentView.swift in Sources */,
 				D5A541002DA844B0004514F7 /* TeeFinderApp.swift in Sources */,
+				D5DE8F572DAC6C63009F7DC8 /* CourseSearchResponse.swift in Sources */,
 				D5BC7A682DAA23C000F38C3B /* AutocompleteTextField.swift in Sources */,
 				D5A541392DA864DD004514F7 /* CourseSearchSession.swift in Sources */,
 				D5BC7A662DAA1EEC00F38C3B /* CourseListView.swift in Sources */,

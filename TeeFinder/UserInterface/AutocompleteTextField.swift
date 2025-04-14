@@ -19,7 +19,7 @@ struct AutocompleteTextField: View {
         ZStack {
             // Autocomplete text field
             TextField("", text: $searchSuggestion)
-                .foregroundColor(.gray)
+                .foregroundColor(AppColor.quaternaryForegroundColor)
                 .padding()
                 .onChange(of: searchQuery) {
                     // Show possible autocompletion
@@ -36,9 +36,9 @@ struct AutocompleteTextField: View {
             TextField(
                 "",
                 text: $searchQuery,
-                prompt: Text("Search Courses").foregroundColor(.gray)
+                prompt: Text("Search Courses").foregroundColor(AppColor.quaternaryForegroundColor)
             )
-            .foregroundColor(.white)
+            .foregroundColor(AppColor.primaryForegroundColor)
             .padding()
             .onChange(of: searchQuery) { _,_ in
                 onChange(searchQuery)
