@@ -52,26 +52,28 @@ extension PersistenceController {
     ///   - completion: An optional completion handler to which all errors that occurred during processing will be passed.
     private func _persist(_ items: [CourseModel], in context: NSManagedObjectContext, completion: (([Error]) -> Void)?) {
         var errors: [Error] = []
-        let request: NSFetchRequest<Course> = Course.fetchRequest()
-        request.predicate = NSPredicate(format: "\(#keyPath(Course.apiId)) IN %@", NSArray(array: items.map { Int32($0.id) }))
+        let fetchRequest: NSFetchRequest<Course> = Course.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Course.apiId)) IN %@", NSArray(array: items.map { Int32($0.id) }))
         do {
-            let results = try context.fetch(request)
-            let idsSet = Set(results.map { Int($0.apiId) })
-            let itemsToCreate = items.filter { !idsSet.contains($0.id) }
-            let itemDicts: [[String: Any]] = itemsToCreate.compactMap { item in
-                guard let data = try? JSONEncoder().encode(item) else { return nil }
-                return [
-                    #keyPath(Course.apiId): item.id,
-                    #keyPath(Course.data): data,
-                    #keyPath(Course.courseName): item.courseName,
-                    #keyPath(Course.clubName): item.clubName,
-                    #keyPath(Course.address): item.location.address as Any,
-                    #keyPath(Course.city): item.location.city as Any,
-                    #keyPath(Course.state): item.location.state as Any,
-                ]
+            let existingObjects = try context.fetch(fetchRequest)
+            let existingObjectIdsSet = Set(existingObjects.map { Int($0.apiId) })
+            let objectModels = items.filter { !existingObjectIdsSet.contains($0.id) }
+            if !objectModels.isEmpty {
+                let objects: [[String: Any]] = objectModels.compactMap { item in
+                    guard let data = try? JSONEncoder().encode(item) else { return nil }
+                    return [
+                        #keyPath(Course.apiId): item.id,
+                        #keyPath(Course.data): data,
+                        #keyPath(Course.courseName): item.courseName,
+                        #keyPath(Course.clubName): item.clubName,
+                        #keyPath(Course.address): item.location.address as Any,
+                        #keyPath(Course.city): item.location.city as Any,
+                        #keyPath(Course.state): item.location.state as Any,
+                    ]
+                }
+                let insertRequest = NSBatchInsertRequest(entityName: "Course", objects: objects)
+                let _ = try context.execute(insertRequest) as? NSBatchInsertResult
             }
-            let request = NSBatchInsertRequest(entityName: "Course", objects: itemDicts)
-            let _ = try context.execute(request) as? NSBatchInsertResult
         } catch {
             errors.append(error)
         }
