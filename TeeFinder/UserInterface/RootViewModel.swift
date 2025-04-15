@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 import CoreData
 
-
 class RootViewModel: ObservableObject, CourseListViewModel {
     let searchTrie = Trie<CourseID>()
     @Published private(set) var items: [CourseModel] = []
@@ -39,7 +38,7 @@ class RootViewModel: ObservableObject, CourseListViewModel {
                     print(errors)
                 }
                 // Now update our trie with the new course
-                courses.forEach { self?.updateTrie(with: $0) }
+                self?.updateTrie(with: courses)
             case .failure(let error):
                 print("Failed to sync: \(error)")
             }
@@ -78,18 +77,22 @@ class RootViewModel: ObservableObject, CourseListViewModel {
             self?.error = nil
         }
     }
-    
+
     /// Updates the trie data structure with the provided CourseModel object.
     /// This method inserts relevant information from the course into the trie to support prefix-based searching.
     /// - Parameter course: The course to inject relevant information from into the trie data structure.
-    private func updateTrie(with course: CourseModel) {
-        let id = course.id
-        searchTrie.insert(key: course.clubName, value: id)
-        searchTrie.insert(key: course.courseName, value: id)
-        guard let address = course.location.address,
-              let city = course.location.city else { return }
-        searchTrie.insert(key: address, value: id)
-        searchTrie.insert(key: city, value: id)
+    private func updateTrie(with courses: [CourseModel]) {
+        var courseData: [(key: String, value: CourseID)] = []
+        for course in courses {
+            let id = course.id
+            courseData.append((key: course.clubName, value: id))
+            courseData.append((key: course.courseName, value: id))
+            guard let address = course.location.address,
+                  let city = course.location.city else { continue }
+            courseData.append((key: address, value: id))
+            courseData.append((key: city, value: id))
+        }
+        searchTrie.insert(courseData)
     }
     
     /// Computes a difference between the currently shown items and the new list of items,
@@ -123,7 +126,7 @@ class RootViewModel: ObservableObject, CourseListViewModel {
     }
     
     private func _search(_ query: String, comprehensive: Bool, completion: @escaping () -> Void) {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+        DispatchQueue.global(qos: .default).async { [weak self] in
             guard let self else { return }
             // Trie.suggestions() is synchronous and we don't want to block the main thread.
             // Ensure this is called on a background thread.
@@ -141,7 +144,7 @@ class RootViewModel: ObservableObject, CourseListViewModel {
             switch result {
             case .success(let courses):
                 suggestions = merge(suggestions, with: courses.map { $0.id })
-                courses.forEach { self.updateTrie(with: $0) }
+                self.updateTrie(with: courses)
             default:
                 break
             }
@@ -151,7 +154,7 @@ class RootViewModel: ObservableObject, CourseListViewModel {
                 guard let self else { return }
                 switch response {
                 case .success(let searchResponse):
-                    searchResponse.courses.forEach { self.updateTrie(with: $0) }
+                    self.updateTrie(with: searchResponse.courses)
                     PersistenceController.shared.persist(searchResponse.courses, synchronous: true) { errors in
                         // We don't need to alert the user of cache errors.
                         guard !errors.isEmpty else { return }
@@ -192,7 +195,7 @@ class RootViewModel: ObservableObject, CourseListViewModel {
         if comprehensive {
             searchSuggestion = ""
         }
-        debounce(for: 0.25) { [weak self] in
+        debounce(for: 0.5) { [weak self] in
             guard let self else { return }
             _search(query, comprehensive: comprehensive) {
                 completion?()
