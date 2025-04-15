@@ -45,24 +45,28 @@ public class Trie<Object> {
 }
 
 public extension Trie {
-    /// Inserts a key-value pair into the trie.
-    /// - Parameters:
-    ///   - key: The string key to insert.
-    ///   - value: The value to associate with the key.
-    func insert(key: String, value: Object) {
-        queue.async(flags: .barrier) { [weak self] in
-            guard let self else { return }
-            var current = head
-            for char in key {
-                if let node = current.children[char] {
-                    current = node
-                } else {
-                    let node = TrieNode<Object>(value: char)
-                    current.children[char] = node
-                    current = node
-                }
+    private func _insert(_ key: String, _ value: Object) {
+        var current = head
+        for char in key {
+            if let node = current.children[char] {
+                current = node
+            } else {
+                let node = TrieNode<Object>(value: char)
+                current.children[char] = node
+                current = node
             }
-            current.end = value
+        }
+        current.end = value
+    }
+
+    /// Inserts key-value pairs into the trie.
+    /// - Parameters:
+    ///   - pairs: The key-value pairs to insert into the trie.
+    func insert(_ pairs: [(key: String, value: Object)]) {
+        queue.async(flags: .barrier) { [weak self] in
+            for (key, value) in pairs {
+                self?._insert(key, value)
+            }
         }
     }
 

@@ -86,6 +86,7 @@ extension PersistenceController {
     ///   - completion: An optional completion handler to which all errors that occurred during processing will be passed.
     public func persist(_ items: [CourseModel], synchronous: Bool = true, completion: (([Error]) -> Void)? = nil) {
         if synchronous {
+            assert(!Thread.isMainThread)
             backgroundContext.performAndWait {
                 _persist(items, in: backgroundContext, completion: completion)
             }
