@@ -38,7 +38,7 @@ final class RootViewModelTests: XCTestCase {
         viewModel.searchQuery = "Peb"
         viewModel.searchSuggestion = ""
         
-        viewModel.searchTrie.insert(key: course.courseName, value: course.id)
+        viewModel.searchTrie.insert([(key: course.courseName, value: course.id)])
         let result = viewModel.autocomplete("Peb")
         
         XCTAssert(result.hasPrefix("Peb"))
@@ -64,7 +64,7 @@ final class RootViewModelTests: XCTestCase {
     func testSearchQueryUpdatesSearchSuggestion() {
         let course: CourseModel = CourseModel.mock(from: mockData)!
         let id: CourseID = course.id
-        viewModel.searchTrie.insert(key: "Torrey", value: id)
+        viewModel.searchTrie.insert([(key: "Torrey", value: id)])
         let result = viewModel.autocomplete("Tor")
         XCTAssertEqual(result, "Torrey")
     }

@@ -98,7 +98,7 @@ class RootViewModel: ObservableObject, CourseListViewModel {
     /// Computes a difference between the currently shown items and the new list of items,
     /// and updates the stored array of items in-place.
     /// - Parameter updatedItems: The new collection of items to update the current collection with.
-    private func updateCollection(with updatedItems: [CourseID]) {
+    public func updateCollection(with updatedItems: [CourseID]) {
         // Time complexity is O(n * m) for difference(from:), where
         // n is the count of the collection and m is parameter.count.
         let result = PersistenceController.shared.fetchCourses(from: updatedItems)

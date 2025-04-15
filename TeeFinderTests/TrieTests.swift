@@ -25,28 +25,28 @@ final class TrieTests: XCTestCase {
         self.measure {
             for _ in 0..<1000 {
                 let string = "\(UUID())"
-                trie.insert(key: string, value: "BlueTees")
+                trie.insert([(key: string, value: "BlueTees")])
             }
         }
     }
 
     /// Test inserting and retrieving a key
     func testInsertAndGet() {
-        trie.insert(key: "abc", value: "123")
+        trie.insert([(key: "abc", value: "123")])
         let result = trie.get(key: "abc")
         XCTAssertEqual(result, "123", "Should retrieve the value for 'abc'")
     }
 
     /// Test getting a non-existent key
     func testGetNonExistentKey() {
-        trie.insert(key: "abc", value: "123")
+        trie.insert([(key: "abc", value: "123")])
         let result = trie.get(key: "abcd")
         XCTAssertNil(result, "Should return nil for a key that doesn't exist")
     }
 
     /// Test removing a key from the trie
     func testRemoveKey() {
-        trie.insert(key: "abc", value: "123")
+        trie.insert([(key: "abc", value: "123")])
         trie.remove(key: "abc")
 
         // Wait for async remove to complete
@@ -61,9 +61,9 @@ final class TrieTests: XCTestCase {
 
     /// Test autocomplete returns a valid result
     func testAutocomplete() {
-        trie.insert(key: "abc", value: "123")
-        trie.insert(key: "abd", value: "456")
-        trie.insert(key: "abe", value: "789")
+        trie.insert([(key: "abc", value: "123")])
+        trie.insert([(key: "abd", value: "456")])
+        trie.insert([(key: "abe", value: "789")])
 
         let result = trie.autocomplete("ab")
 
@@ -73,10 +73,10 @@ final class TrieTests: XCTestCase {
 
     /// Test suggestions return multiple matching results
     func testSuggestions() {
-        trie.insert(key: "a", value: "1")
-        trie.insert(key: "ab", value: "2")
-        trie.insert(key: "abc", value: "3")
-        trie.insert(key: "b", value: "4")
+        trie.insert([(key: "a", value: "1")])
+        trie.insert([(key: "ab", value: "2")])
+        trie.insert([(key: "abc", value: "3")])
+        trie.insert([(key: "b", value: "4")])
 
         let results = trie.suggestions("a")
 
