@@ -46,7 +46,7 @@ To check out a version of the app where sync on app launch is removed, please ch
 git checkout tedschultz/lightweight
 ```
 
-This approach allows the app to:
+Syncing the API database on launch allows the app to:
 
 - Search and filter courses on the client-side
 - Provide a responsive user experience during search where searches are cached persistently between launches
