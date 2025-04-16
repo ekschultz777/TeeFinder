@@ -19,12 +19,14 @@ https://vimeo.com/1075479559
 ## Getting Started
 
 1. Clone the repository:
-   git clone https://github.com/ekschultz777/TeeFinder.git
-   cd TeeFinder
+```
+git clone https://github.com/ekschultz777/TeeFinder.git
+cd TeeFinder
+```
    
    NOTE: If the app throws errors that data cannot be found, this may be due to the tier of the subscription which heavily limits API calls. If this is an issue, you may create a free account at https://golfcourseapi.com/ and use the API key to initialize the APISession class.
 
-2. Open the project in Xcode
+3. Open the project in Xcode
 open TeeFinder.xcodeproj
 Build and run the app on a simulator or physical iOS device.
 
@@ -40,7 +42,9 @@ This app relies on a third-party API, __GolfCourseAPI__, to retrieve golf course
 At present, the API does not support querying courses by geographic location or other filters. 
 As a result, the application implements a workaround by loading the database of courses upon the first launch.
 To check out a version of the app where sync on app launch is removed, please checkout the branch tedschultz/lightweight:
+```
 git checkout tedschultz/lightweight
+```
 
 This approach allows the app to:
 
