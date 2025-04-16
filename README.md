@@ -52,10 +52,10 @@ Syncing the API database on launch allows the app to:
 - Provide a responsive user experience during search where searches are cached persistently between launches
 - Avoid repeated API calls for each query
 
-Trade-Offs
+__Trade-Offs:__
 While this method improves search performance, it introduces a significant upfront cost in terms of network usage and initial load time. In a production environment, this would not be considered a scalable or user-friendly solution. Ideally, the API should provide endpoints that support location and address based queries.
 
-Implementation Notes
+__Implementation Notes:__
 The app is built using native Swift and SwiftUI, and utilizes URLSession for networking.
 
 ## Contact
