@@ -26,6 +26,7 @@ struct ContentView: View {
                     AutocompleteTextField(viewModel: viewModel,
                                           onChange: { search($0, comprehensive: false) },
                                           onSubmit: { search($0, comprehensive: true) })
+                    .frame(maxWidth: .infinity)
                     Spacer()
                     if comprehensiveSearch {
                         ProgressView()
