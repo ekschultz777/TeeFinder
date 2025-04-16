@@ -39,6 +39,8 @@ Unit tests are provided for data structures and algorithms and crucial functions
 This app relies on a third-party API, __GolfCourseAPI__, to retrieve golf course data. 
 At present, the API does not support querying courses by geographic location or other filters. 
 As a result, the application implements a workaround by loading the database of courses upon the first launch.
+To check out a version of the app where sync on app launch is removed, please checkout the branch tedschultz/lightweight:
+git checkout tedschultz/lightweight
 
 This approach allows the app to:
 
