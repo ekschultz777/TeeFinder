@@ -12,42 +12,11 @@ import CoreData
 class RootViewModel: ObservableObject, CourseListViewModel {
     let searchTrie = Trie<CourseID>()
     @Published private(set) var items: [CourseModel] = []
-    @Published private(set) var syncing: Bool
+    @Published private(set) var syncing: Bool = false
     @Published private(set) var error: Error?
     @Published var searchQuery: String = ""
     @Published var searchSuggestion: String = ""
-    
-    init() {
-        syncing = true
-        commonInit()
-    }
-    
-    /// This function will load the API database locally. This is an expensive operation and shouldn't be done in production.
-    /// A better alternative for production code would be to allow the API to search by location so the client doesn't have to
-    /// do location searching manually.
-    private func commonInit() {
-        // Sync to the API on launch. This function will only sync pages that have
-        // not already been synced.
-        APISession.shared.iterateCourses(iteration: { [weak self] result in
-            switch result {
-            case .success(let courses):
-                // Update or create a new NSManagedObject
-                PersistenceController.shared.persist(courses, synchronous: false) { errors in
-                    // We don't need to alert the user of cache errors
-                    guard !errors.isEmpty else { return }
-                    print(errors)
-                }
-                // Now update our trie with the new course
-                self?.updateTrie(with: courses)
-            case .failure(let error):
-                print("Failed to sync: \(error)")
-            }
-        }, completion: { [weak self] in
-            guard let self else { return }
-            syncing = false
-        })
-    }
-    
+            
     private var debounceWork: DispatchWorkItem? = nil
     /// Simple debounce function.
     /// - Parameters:
